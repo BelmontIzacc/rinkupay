@@ -1,6 +1,6 @@
 {
   "name": "rinkupay",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon system/index.js",
