@@ -13,7 +13,7 @@ const enModel = require("../models/en");
 /**
  * @name registrar_isr
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Crea un regitro de deduccion de impuestos (ISR).
  * @param base Tasa del impuesto sobre la renta (ISR) base.
  * @param limite Límite de ingresos para el impuesto sobre la renta (ISR) adicional.
@@ -43,7 +43,7 @@ nominaCtrl.registrar_isr = async (req, res) => {
 /**
  * @name registrar_en
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Crea un regitro para la coleccion entregas (EN).
  * @param us Identificador del usuario, indica a que usuario pertenece el registro de entrega.
  * @param entregas Numero de entregas realizadas.

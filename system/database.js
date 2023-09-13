@@ -1,7 +1,7 @@
 /**
  * @description Configuracion para la conexion a base de datos
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  */
 
 // import de modulo mongoose

@@ -14,7 +14,7 @@ const coModel = require("../models/co");
 /**
  * @name registro
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Crea un regitro de usuario para la coleccion Usuario (US) y a su vez crea un registro en Corte
  * @param nombre Nombre completo del usuario.
  * @param no_empleado Numero de identificacion del usuario.
@@ -83,7 +83,7 @@ usuarioCtrl.registro = async (req, res) => {
 /**
  * @name login
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Busca el usuario indicado y crea el token de autenticacion en caso de existir
  * @param no_empleado Numero de identificacion del usuario.
  * @param clave Contraseña para ingreso al sistema.
@@ -118,7 +118,7 @@ usuarioCtrl.login = async (req, res) => {
 /**
  * @name registroRol
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Registra un rol para un empleado
  * @param Tipo Nombre del tipo de empleado.
  * @param sueldo Sueldo base por hora segun del tipo de empleado.
@@ -154,7 +154,7 @@ usuarioCtrl.agregrRol = async (req, res) => {
 /**
  * @name validarClave
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Compara dos contraseñas, una encriptada y la otra sin encriptar para indicar si son iguales
  * @param passComparar Clave que indica el usuario sin encriptar.
  * @param PassUser Clave encriptada que se va a comparar con la clave sin encriptar.
@@ -171,7 +171,7 @@ validarClave = (passComparar, passUser) => {
 /**
  * @name generarHash
  * @author IIB
- * @version 1.0
+ * @version 0.0.0
  * @description Encripta la clave indicada por un usuario
  * @param clave Clave que indica el usuario sin encriptar
  * @returns '...'
