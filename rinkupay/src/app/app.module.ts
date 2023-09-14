@@ -50,7 +50,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatRadioModule} from '@angular/material/radio';
 
 /** 
  * declarando los modulos para su uso dentro del sistema por medio de variables
@@ -90,11 +90,9 @@ import {MatTableDataSource} from '@angular/material/table';
     MatExpansionModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatPaginatorModule,
-    MatTableDataSource,
-    MatPaginator,
+    MatRadioModule
   ],
   providers: [Title, MatDatepickerModule],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

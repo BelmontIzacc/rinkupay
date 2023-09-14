@@ -1,13 +1,13 @@
 .example-icon {
     padding: 0 14px;
     margin: 0 10px 0 auto;
-  }
+}
 
 .example-spacer {
     flex: 1 1 auto;
 }
 
-.example-card{
+.example-card {
     max-width: 430px;
     margin: 100px auto;
 }
@@ -15,7 +15,7 @@
 .example-card {
     max-width: 850px;
 }
-  
+
 .example-header-image {
     background-image: url('../../../../assets/upiizIpn.png');
     background-size: cover;
@@ -26,25 +26,25 @@
     max-width: 500px;
     width: 100%;
 }
-  
+
 .example-full-width {
     width: 80%;
 }
 
-form{
+form {
     text-align: center;
 }
 
-.example-button-row{
+.example-button-row {
     text-align: right;
     margin: 2px auto;
 }
 
-.example-button-row button{
+.example-button-row button {
     margin-right: 4px;
 }
 
-.registro{
+.registro {
     margin: 20px auto;
     text-align: center;
 }
@@ -53,15 +53,15 @@ form{
     max-width: auto;
     align-content: center;
     align-items: center;
-    
+
     margin-left: auto;
     margin-right: auto;
 }
 
-.columna{
+.columna {
     text-align: center;
 }
-  
+
 .example-header-image2 {
     background-image: url('../../../../assets/upiizIpn.png');
     background-size: cover;
@@ -69,41 +69,46 @@ form{
 
 table {
     width: 100%;
-  }
+}
 
-.totalFolios{
-    background-color:  rgba(0, 0, 0, 0.12);
+.totalFolios {
+    background-color: rgba(0, 0, 0, 0.12);
     box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
 }
 
 ::ng-deep .mat-step-header .mat-step-icon-selected {
-    background-color: #682444; 
- }
+    background-color: #682444;
+}
 
- .example-margin {
+.example-margin {
     margin: 0 10px;
+}
+
+.example-card3 {
+    margin: 10px auto;
+}
+
+.example-container {
+    height: 400px;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+}
+
+.example-button-row button {
+    display: table-cell;
+    margin-right: 8px;
   }
-
-.example-card3{
-    margin: 10px auto; 
-}
-
-:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle{   
-    stroke:rgba(255, 60, 3);
-}
-
-:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
-    stroke: rgba(255, 130, 0);
-}
-
-:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
-    stroke: rgba(255, 205, 0);
-}
-
-:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
-    stroke: rgba(101, 87, 9);
-}
-
-:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
-    stroke: rgba(0, 128, 58);
-}
+  
+  .example-flex-container {
+    display: flex;
+    
+  }
+  
+  .example-button-container {
+    display: flex;
+    justify-content: center;
+    
+  }

@@ -18,10 +18,11 @@ router.post('/', usuarioCtrl.registro);
 router.post('/login', usuarioCtrl.login);
 router.post('/buscar', usuarioCtrl.buscarUsuario);
 router.get('/empleados', usuarioCtrl.obtenerEmpleados);
-
+router.delete('/eliminar/:empleado', usuarioCtrl.eliminarUsuario);
 
 // rol
 router.post('/agregar_rol', usuarioCtrl.agregrRol)
+router.get('/rols', usuarioCtrl.obtenerROL)
 
 // export del modulo router
 module.exports = router;

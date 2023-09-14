@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { UserService } from './../../services/user.service';
 import { NominaService } from './../../services/nomina.service';
-import { User } from './../../models/userModel';
+import { User } from '../../models/user.Model';
 
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 

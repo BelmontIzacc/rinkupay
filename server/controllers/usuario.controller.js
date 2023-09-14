@@ -10,6 +10,8 @@ const bcrypt = require('bcrypt-nodejs');
 const usuarioModel = require("../models/usuario");
 const rolModel = require("../models/rol");
 const coModel = require("../models/corte");
+const enModel = require("../models/entrega");
+
 const jwt = require('jsonwebtoken');
 
 const tk = "zcz0au22eiz3s23l4oie2V222";
@@ -38,6 +40,15 @@ usuarioCtrl.registro = async (req, res) => {
     if (tipo_usuario == true) {
         rol = null;
         isr = null;
+    }
+
+    const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
+    if (userFind) {
+        res.json({
+            estatus: false,
+            us: "Ya existe el numero de empleado registrado"
+        });
+        return;
     }
 
     const us = new usuarioModel();
@@ -227,6 +238,52 @@ usuarioCtrl.agregrRol = async (req, res) => {
         estatus: true,
         rol: id
     });
+}
+
+/**
+ * @name retornarROL
+ * @author IIB
+ * @version 0.0.2
+ * @description Recupera todos los registros de ROL
+ * @returns { estatus: true, rols: [{'...'}] 
+ */
+usuarioCtrl.obtenerROL = async(req, res) => {
+    const rols = await rolModel.find();
+
+    res.json({
+        estatus: true,
+        rols: rols
+    })
+}
+
+/**
+ * @name eliminarUser
+ * @author IIB
+ * @version 0.0.2
+ * @description Elimina todos los registros de usuarios pertenecientes a un id
+ * @returns { estatus: true, rols: [{'...'}] 
+ */
+usuarioCtrl.eliminarUsuario = async(req, res) => {
+    const no_empleado = req.params.empleado;
+
+    const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
+    if (!userFind) {
+        res.json({
+            estatus: false,
+            us: "No existe el usuario indicado"
+        });
+        return;
+    }
+
+    const userId = userFind._id;
+    await coModel.deleteMany({ 'US': userId });
+    await enModel.deleteMany({'US': userId});
+    await usuarioModel.deleteMany({ 'no_empleado': no_empleado });
+    
+    res.json({
+        estatus: true,
+        us: userId
+    })
 }
 
 /**

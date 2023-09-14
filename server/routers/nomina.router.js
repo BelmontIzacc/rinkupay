@@ -13,8 +13,12 @@ const nominaCtrl = require('../controllers/nomina.controller');
 
 // rutas
 
+// corte
+router.get('/corte', nominaCtrl.obtenerUserCo)
+
 //isr
 router.post('/reg_isr', nominaCtrl.registrar_isr);
+router.get('/isr', nominaCtrl.obtenerIsr);
 
 //entregas
 router.post('/reg_entrega', nominaCtrl.registrar_en)

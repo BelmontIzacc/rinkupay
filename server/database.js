@@ -8,8 +8,8 @@
 const mongoose = require('mongoose');
 
 // Uri de conexion a base de datos.
-// establece el usuario: isaulbelmont y pass:rzTXgZIOI6J0YHQ4 
-const URI = "mongodb+srv://isaulbelmont:rzTXgZIOI6J0YHQ4@cluster0.0se2k4z.mongodb.net/rinkupay"
+// establece el usuario: isaulbelmont y pass:rzTXgZIOI6J0YHQ4 | EY3h431otPWwbF9R
+const URI = "mongodb+srv://isaulbelmont:EY3h431otPWwbF9R@cluster0.0se2k4z.mongodb.net/rinkupay"
 
 // realiza la conexion segun la uri indicada
 // si conecta, indica mensaje de  "Mongo conectado", caso contrario indica el error

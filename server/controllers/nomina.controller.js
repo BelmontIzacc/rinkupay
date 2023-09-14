@@ -41,6 +41,47 @@ nominaCtrl.registrar_isr = async (req, res) => {
     });
 }
 
+
+/**
+ * @name recuperarISR
+ * @author IIB
+ * @version 0.0.2
+ * @description Recupera el registro ISR.
+ * @returns { estatus: true, isr: {'...'}} | 
+ */
+nominaCtrl.obtenerIsr = async (req, res) => {
+    const isr = await isrModel.find();
+
+    res.json({
+        estatus: true,
+        isr: isr[0]
+    })
+}
+
+/**
+ * @name recuperarUserCO
+ * @author IIB
+ * @version 0.0.2
+ * @description De la coleccion CORTE (CO) recupera el registro de corte mas actual.
+ * @returns { estatus: true, cos: [{'...'}]} 
+ */
+
+nominaCtrl.obtenerUserCo = async (req, res) => {
+    const cortes = await coModel.find().sort({ creacion: -1 });
+    const unicCo = [];
+    const idsReg = [""];
+    for (let co of cortes){
+        const userId  = co.US;
+        const existe = idsReg.indexOf(elemento => elemento === userId);
+        if(existe === -1){
+            idsReg.push(userId);
+            unicCo.push(co);
+        }
+    }
+    res.json({ estatus: true, cos: unicCo })
+}
+
+
 /**
  * @name registrar_en
  * @author IIB
@@ -57,14 +98,14 @@ nominaCtrl.registrar_en = async (req, res) => {
     const entregas = req.body.entregas;
     const hora = req.body.horas;
     const fecha = req.body.fecha;
-    const co = req.body.co; 
+    const co = req.body.co;
 
-    const corte = await coModel.findOne({_id: co});
+    const corte = await coModel.findOne({ _id: co });
     if (!corte) {
         res.send({
             estatus: false,
             mensaje: "No existe el registro CO"
-        }); 
+        });
         return;
     }
 
@@ -82,7 +123,7 @@ nominaCtrl.registrar_en = async (req, res) => {
     const enArray = corte.EN;
     enArray.push(idEn);
 
-    await coModel.findByIdAndUpdate(co, {EN: enArray});
+    await coModel.findByIdAndUpdate(co, { EN: enArray });
 
     res.json({
         estatus: true,

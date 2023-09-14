@@ -3,11 +3,11 @@ import { DialogInfoComponent } from './../dialog-info/dialog-info.component';
 
 /**
  * @autor Belmont
- * @date 09/03/2020
+ * @date 14/09/2023
  */
 
 /**
-  * @description componente que permite realizar configuraciones en el sistema
+  * @description componente que permite agregar un empleado al sistema
   * 
 */
 
@@ -16,9 +16,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MainUserComponent } from '../main-user/main-user.component';
 import { NgForm } from '@angular/forms';
 import { UserService } from "./../../../services/user.service";
-import { User } from "./../../../models/userModel";
-import {MatSnackBar, MatSnackBarConfig} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
+import { NominaService } from "./../../../services/nomina.service";
+
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 
 import { Router } from '@angular/router';
 
@@ -35,103 +36,113 @@ export class DialogComponent implements OnInit {
   private config: MatSnackBarConfig;
   private duracion = 6;
 
-  /** información para llenar la informacion en los inputs de usuario */
-  private user : User;
-  username = "-";
-  password = "";
-  iduser = "";
+  public usuarioGuardar = {
+    user: "",
+    password: "",
+    userName: ""
+  }
 
-  /** opcion para dejar cerrada las tablas de los paneles */
-  panelOpenState = true;
+  rolSelect: { tipo: string, addMore: boolean, id: string } = { tipo: "", addMore: false, id: "" };
+  tipoRols: Array<{ tipo: string, addMore: boolean, id: string }> = [];
 
+  private isr = "";
 
   /** Contructor de la clase para el manejo de configuraciones en el sisstema */
   constructor(
 
     private _snackBar: MatSnackBar,
-    private userService:UserService,
+    private userService: UserService,
+    private nominaService: NominaService,
     public dialogRef: MatDialogRef<MainUserComponent>,
-    private router:Router,
     public dialog: MatDialog,
-    
-  ){
+
+  ) {
 
     this.config = new MatSnackBarConfig();
-    this.config.duration = 1000*this.duracion;
-
+    this.config.duration = 1000 * this.duracion;
+    this.obtenerRols();
+    this.obtenerRegIsr();
   }
 
   ngOnInit(): void {
 
-    this.getUser();
+  }
 
+  agregarUsuario(form: NgForm) {
+    const password = form.value.password;
+    const user = form.value.user;
+    const rol = form.value.rols;
+    const userName = form.value.userName;
+
+    if (rol.tipo === '') {
+      this.openSnackBar("Indica el tipo de usuario");
+      return;
+    }
+
+    let addUser = {
+      nombre: userName,
+      no_empleado: user,
+      clave: password,
+      tipo_usuario: false,
+      rol: "",
+      isr: "",
+    }
+    if (rol.addMore) {
+      // usuario normal
+      addUser.rol = rol.id
+      addUser.isr = this.isr
+      addUser.tipo_usuario = false;
+    } else {
+      // administrador
+      addUser.tipo_usuario = true;
+    }
+
+    // guardar usuario
+    this.userService.guardarUsuario(addUser).subscribe(respuesta => {
+      if (respuesta.estatus) {
+        console.log(respuesta);
+        this.openSnackBar("Usuario registrado");
+      } else {
+        this.openSnackBar(respuesta.us);
+      }
+    })
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  getUser(){
-
-    /*
-    this.user = this.userService.getCurrentUser();
-    this.username = this.user.user;
-    this.iduser = this.user._id;
-    */
-  }
-
-  buscarUsuario( form: NgForm){
-    
-    this.userService.eliminarUsuario(form.value.iduser).subscribe(res => {
-
-      console.log(res);
-
-      let user: any = {user: "", password: ""};
-      user.user = form.value.username;
-      user.password = form.value.password;
-
-      this.userService.createUser(user).subscribe( res=> {
-
-        let newUser = res as User;
-        this.userService.logoutUser();
-        //this.userService.setUser(newUser);
-      
-        this.openSnackBar("Se a actualizado el usuario correctamente.");
-
-        this.onNoClick();
-
-      });
-
-    });
-
-  }
-
   /** Muestra mensajes emergentes */
   openSnackBar(message) {
-    this._snackBar.open(message, 'close',this.config);
+    this._snackBar.open(message, 'close', this.config);
   }
 
-  /** Elimina el conteo de folios y lo restablece a 0 */
-  deleteFolios(){
-
+  obtenerRols() {
+    this.userService.obtenerRoles().subscribe(respuesta => {
+      if (respuesta.estatus) {
+        this.tipoRols.push({
+          tipo: "Administrador",
+          addMore: false,
+          id: null
+        });
+        const rols = respuesta.rols;
+        for (let r of rols) {
+          this.tipoRols.push({
+            tipo: r.tipo,
+            addMore: true,
+            id: r._id
+          });
+        }
+      }
+    });
   }
 
-  /** Elimina el conteo de folios y lo restablece a 0 */
-  deleteEncuestas(){
-
+  obtenerRegIsr() {
+    this.nominaService.obtenerIsr().subscribe(respuesta => {
+      if (respuesta.estatus) {
+        this.isr = respuesta.isr._id;
+      }
+    });
   }
-
-    /** Funcion para habrir un modal */
-    openDialog(): void {
-      const dialogRef = this.dialog.open(DialogInfoComponent, {
-        width: 'auto',
-        height: 'auto',
-        data: {name: "belmont", animal: "Castlevania"}
-      });
-  
-      dialogRef.afterClosed().subscribe(result => {
-        
-      });
-    }
 
 }

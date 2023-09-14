@@ -13,9 +13,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { isNullOrUndefined } from 'util';
-import { User } from '../models/userModel';
-import { Key } from '../models/keyModel';
+import { ISR } from '../models/isr.Model';
+import { CO } from '../models/co.Model';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +48,44 @@ export class NominaService {
       });
     return res.asObservable();
   }
+
+  /**
+   * @description Recupera el registro ISR perteneciente a los usuarios
+   * @returns { estatus: boolean, isr: {...}}
+   */
+  public obtenerIsr(): Observable<{ estatus: boolean, isr: ISR }> {
+    let res = new Subject<{ estatus: boolean, isr: ISR }>();
+    this.http.get(this.URL_API + '/isr').subscribe((respuesta: any) => {
+      if (respuesta.estatus) {
+        res.next({ estatus: true, isr: respuesta.isr })
+      } else {
+        res.next({ estatus: false, isr: respuesta.mensaje });
+      }
+    },
+      err => {
+        res.error(err);
+      });
+    return res.asObservable();
+  }
+
+  /**
+   * @description Recupera el registro mas actual del usuario
+   * @returns { estatus: boolean, cos: [{...}]}
+   */
+    public obtenerCos(): Observable<{ estatus: boolean, cos: Array<CO> }> {
+      let res = new Subject<{ estatus: boolean, cos: Array<CO> }>();
+      this.http.get(this.URL_API + '/corte').subscribe((respuesta: any) => {
+        if (respuesta.estatus) {
+          res.next({ estatus: true, cos: respuesta.cos })
+        } else {
+          res.next({ estatus: false, cos: respuesta.cos });
+        }
+      },
+        err => {
+          res.error(err);
+        });
+      return res.asObservable();
+    }
 
 }
 

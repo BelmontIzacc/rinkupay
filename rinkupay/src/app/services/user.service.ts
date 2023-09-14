@@ -14,7 +14,8 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { isNullOrUndefined } from 'util';
-import { User } from '../models/userModel';
+import { User } from '../models/user.Model';
+import { ROL } from '../models/rol.Model';
 
 @Injectable({
   providedIn: 'root'
@@ -88,19 +89,23 @@ export class UserService {
     return res.asObservable();
   }
 
-  /** obtiene a todos los usuarios registrados dentro del sistema*/
-  getAllUser() {
-    return this.http.get(this.URL_API + '/GET');
-  }
-
-  /** registra a un usuario dentro del sistema*/
-  createUser(User: User) {
-    return this.http.post(this.URL_API + '/POST', User);
-  }
-
-  /** elimina un usuario registrado dentro del sistema*/
-  eliminarUsuario(_id: String) {
-    return this.http.delete(this.URL_API + '/DELETE/' + _id);
+  /**
+   * @description Recupera los roles de los empleados
+   * @returns { estatus: boolean, rols: [{"..."}]} | { estatus: boolean, mensaje: "..."} 
+   */
+  public obtenerRoles(): Observable<{ estatus: boolean, rols: Array<ROL> }> {
+    let res = new Subject<{ estatus: boolean, rols: Array<ROL> }>();
+    this.http.get(this.URL_API + '/rols').subscribe((respuesta: any) => {
+      if (respuesta.estatus) {
+        res.next({ estatus: true, rols: respuesta.rols });
+      } else {
+        res.next({ estatus: false, rols: respuesta.rols });
+      }
+    },
+      err => {
+        res.error(err);
+      });
+    return res.asObservable();
   }
 
   /**
@@ -111,6 +116,54 @@ export class UserService {
   public setUser(user: { token: string, US: string }) {
     let user_string = JSON.stringify(user);
     localStorage.setItem("currentUser", user_string);
+  }
+
+
+  /**
+   * @description Registrar un usuario
+   * @param user, conriene los datos del usuario a registrar : nombre, no_empleado, clave, tipo_usuario, rol, isr 
+   * @returns { estatus: boolean, us: "..."} | { estatus: boolean, us: "..."}
+   */
+  public guardarUsuario(user: { nombre: string, no_empleado: string, clave: string, tipo_usuario: boolean, rol: string, isr: string }): Observable<{ estatus: boolean, us: string }> {
+    let res = new Subject<{ estatus: boolean, us: string }>();
+    this.http.post(this.URL_API + '/', {
+      nombre: user.nombre,
+      no_empleado: user.no_empleado,
+      clave: user.clave,
+      tipo_usuario: user.tipo_usuario,
+      rol: user.rol,
+      isr: user.isr
+    }).subscribe((respuesta: any) => {
+      if (respuesta.estatus) {
+        res.next({ estatus: true, us: respuesta.us });
+      } else {
+        res.next({ estatus: false, us: respuesta.us });
+      }
+    },
+      err => {
+        res.error(err);
+      });
+    return res.asObservable();
+  }
+
+  /**
+   * @description Eliminar un usuario
+   * @param no_empleado numero de empleado a eliminar
+   * @returns { estatus: boolean, us: "..."} 
+   */
+  public eliminarUsuario(no_empleado: string): Observable<{ estatus: boolean, us: string }> {
+    let res = new Subject<{ estatus: boolean, us: string }>();
+    this.http.delete(this.URL_API + '/eliminar/'+no_empleado).subscribe((respuesta: any) => {
+      if (respuesta.estatus) {
+        res.next({ estatus: true, us: respuesta.us });
+      } else {
+        res.next({ estatus: false, us: respuesta.us });
+      }
+    },
+      err => {
+        res.error(err);
+      });
+    return res.asObservable();
   }
 
   /** obtiene la información del usuario registrada en el navegador en currentUser*/
@@ -130,6 +183,3 @@ export class UserService {
   }
 
 }
-
-/// iso29110 -> precio/3 = 2300  -> lo paga ella [6874]
-/// 

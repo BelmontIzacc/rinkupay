@@ -13,7 +13,6 @@ import { Component, OnInit } from '@angular/core';
 import { DialogComponent } from './../dialog/dialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgForm } from '@angular/forms';
-import { DatosConsulta } from 'src/app/models/datosConsultaModel';
 import {MatSnackBar, MatSnackBarConfig} from '@angular/material/snack-bar';
 
 @Component({
@@ -66,9 +65,7 @@ export class DialogInfoComponent implements OnInit {
   /** permite la edicion de información desde la db */
   editarInformacion( form : NgForm){
 
-    let data = form.value as DatosConsulta;
 
-    console.log(data);
 
   }
 
