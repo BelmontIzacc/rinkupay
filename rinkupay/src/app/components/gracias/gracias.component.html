@@ -1,0 +1,83 @@
+<mat-card class="example-card">
+    <mat-grid-list cols="7" rowHeight="100px">
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <a routerLink="/login">
+                <div mat-card-avatar class="menu2-header-image"></div>
+            </a>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="5" [rowspan]="1">
+            <mat-card-header style=" text-align: center;">
+                <mat-card-title>RinkuPlay</mat-card-title>
+                <mat-card-subtitle class="ocultar">Sistema de Gestión de Nómina y Compensaciones</mat-card-subtitle>
+            </mat-card-header>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <div mat-card-avatar class="menu1-header-image"></div>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <mat-list>
+        <mat-divider></mat-divider>
+    </mat-list>
+    <mat-card-content style=" text-align:center;">
+        <br>
+        <form class="example-form center" id="form" #UserForm="ngForm" (ngSubmit)="buscarUsuario(UserForm)">
+            <mat-form-field class="example-full-width">
+                <mat-label>Numero de Empleado</mat-label>
+                <input matInput placeholder="Ex. 91294" name="user" #nombre="ngModel"
+                    [(ngModel)]="usuarioSeleccionado.user" class="form-control" autofocus required>
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+                <mat-label>Contraseña</mat-label>
+                <input matInput placeholder="Ex. **********" name="password" #nombre="ngModel"
+                    [(ngModel)]="usuarioSeleccionado.password" class="form-control" required>
+            </mat-form-field>
+            <div class="example-button-row" id="accionesBoton">
+                <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid">Buscar</button>
+            </div>
+        </form>
+
+
+        <form id="formentrega" #entregaForm="ngForm" (ngSubmit)="registrarEntrega(entregaForm)">
+            <mat-list style="text-align: left;">
+                <h3 mat-subheader>Nombre: Trevor Belmont Belmont</h3>
+                <h3 style="margin-top: -25px;" mat-subheader>ROL: Trevor Belmont Belmont</h3>
+
+                <mat-list-item>
+                    <p mat-line>Indica tu fecha laboral :</p>
+                    <mat-form-field>
+                        <mat-label>Elije la fecha</mat-label>
+                        <input [disabled]="userExiste" matInput [min]="dateMinLimit" [max]="dateMaxLimit"
+                            [matDatepicker]="picker" class="form-control" name="registro" [(ngModel)]="fechaEntrega" required>
+                        <mat-datepicker-toggle matSuffix [for]="picker"
+                            (dateInput)="addEvent($event)"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </mat-list-item>
+                <br>
+                <mat-list-item>
+                    <p mat-line>Entregas realizadas :</p>
+                    <mat-form-field class="inputEntregas">
+                        <input [disabled]="userExiste" matInput type="number" name="entregas"
+                            class="form-control" [(ngModel)]="entregas" min="0" max="1000" required>
+                    </mat-form-field>
+                </mat-list-item>
+                <br>
+                <mat-list-item>
+                    <p mat-line>Horas trabajadas :</p>
+                    <mat-form-field class="inputEntregas">
+                        <input [disabled]="userExiste" matInput type="number" name="horas"
+                            class="form-control" [(ngModel)]="horas" min="0" max="8" required>
+                    </mat-form-field>
+                </mat-list-item>
+                <br>
+
+            </mat-list>
+            <button mat-raised-button type="submit" color="primary" [disabled]="entregaForm.invalid">Registrar</button>
+        </form>
+
+    </mat-card-content>
+    <mat-card-actions>
+        <mat-list>
+        </mat-list>
+    </mat-card-actions>
+</mat-card>

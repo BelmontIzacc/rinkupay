@@ -1,0 +1,50 @@
+.example-icon {
+    padding: 0 14px;
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.example-card{
+    max-width: 430px;
+    margin: 100px auto;
+}
+
+.example-card {
+    max-width: 350px;
+}
+  
+.example-header-image {
+    background-image: url('./../../../assets/upiizIpn.png');
+    background-size: cover;
+}
+
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+  
+.example-full-width {
+    width: 80%;
+}
+
+form{
+    text-align: center;
+}
+
+.example-button-row{
+    text-align: right;
+    margin: 2px auto;
+}
+
+.example-button-row button{
+    margin-right: 4px;
+    background-color: #682444;
+}
+
+.registro{
+    margin: 20px auto;
+    text-align: center;
+}

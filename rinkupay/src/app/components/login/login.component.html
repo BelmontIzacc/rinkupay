@@ -1,0 +1,33 @@
+<mat-card class="example-card">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>Login</mat-card-title>
+      <mat-card-subtitle>RinkuPay</mat-card-subtitle>
+    </mat-card-header>
+    <mat-list>  
+        <mat-divider></mat-divider>
+    </mat-list>
+    <mat-card-content>
+    <br>
+    <form class="example-form center" id="form" #UserForm="ngForm" (ngSubmit)="buscarUsuario(UserForm)">
+        <mat-form-field class="example-full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput placeholder="Ex. 091294IB" name="user" #nombre="ngModel" [(ngModel)] = "usuarioSeleccionado.user" class="form-control" autofocus required>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput placeholder="Ex. **********" name="password" #nombre="ngModel" [(ngModel)] = "usuarioSeleccionado.password" class="form-control" required>
+        </mat-form-field>
+        <div class="example-button-row" id="accionesBoton">
+            <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid" >Acceder</button>
+        </div>
+    </form>
+    </mat-card-content>
+    <mat-card-actions>
+        <mat-list>  
+            <mat-divider></mat-divider>
+        </mat-list>
+        <br>
+        <p class="registro">¿No tiene una cuenta? <a routerLink="/">Regresar</a></p>
+    </mat-card-actions>
+  </mat-card>

@@ -1,0 +1,151 @@
+.espacioTabla{
+    text-align: center;
+    height: 30px;
+  }
+  
+  @media screen and (max-width: 700px) {
+    .ocultar{
+      display: none;
+    }
+    .centrar{
+      text-align: center;
+      width: 80px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .menuPrincipal{
+      margin-top: 0;
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  
+    .espacioTabla{
+      text-align: center;
+      height: 10px;
+    }
+  }
+  
+  .mat-toolbar.mat-primary {
+      background: #ffffff;
+      color: rgb(0, 0, 0);
+  }
+  
+  .mat-card-avatar {
+    height: 68px;
+    width: 68px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  
+  .menu1-header-image {
+      background-image: url('../../../assets/sgc.png');
+      background-size: cover;
+    }
+  
+  .menu2-header-image {
+      background-image: url('../../../assets/ipn.png');
+      background-size: cover;
+  }
+
+  .menu3-header-image {
+    height: 78px;
+    width: 78px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+    display: inline-block;
+  }
+
+  .menu3-header-image {
+    background-image: url('../../../assets/upiizIpn.png');
+    background-size: cover;
+    }
+  
+  .example-icon {
+      padding: 0 14px;
+      margin: 0 10px 0 auto;
+  }
+    
+    .example-spacer {
+      flex: 1 1 auto;
+    }
+    
+    .example-card{
+      max-width: 650px;
+      margin: 100px auto;
+    }
+    
+    .example-form {
+      min-width: 150px;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .example-full-width {
+      width: 80%;
+    }
+    
+    .registro{
+      margin: 10px auto;
+      text-align: center;
+    }
+    
+    #cabez {
+      max-width: 120px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    
+    p{
+      font-family: 'Strong Type', arial;
+      text-shadow: 4px 4px 4px #aaa;
+    }
+
+    .example-button-row{
+      text-align: right;
+      margin: 2px auto;
+  }
+  
+  .example-button-row button{
+      margin-right: 4px;
+  }
+  
+  .mat-list-icon {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  
+    .example-button-row button,
+  .example-button-row a {
+    margin-right: 8px;
+  }
+
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.example-button-row button{
+  margin-right: 4px;
+}
+
+.example-full-width {
+  width: 60%;
+}
+
+.rolSub{
+  padding: 20px;
+}
+
+.inputEntregas {
+  width: 50%;
+  text-align: center;
+}

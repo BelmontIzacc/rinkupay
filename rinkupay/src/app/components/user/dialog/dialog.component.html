@@ -1,0 +1,81 @@
+<h1 mat-dialog-title>Herramientas</h1>
+<div mat-dialog-content>
+
+    <mat-accordion>
+
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Información de usuario
+            </mat-panel-title>
+            <mat-panel-description>
+              Cambiar Usuario o Contraseña 
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+      
+            <form class="example-form center" id="form" #UserForm="ngForm" (ngSubmit)="buscarUsuario(UserForm)">
+
+                <input type="hidden" name="iduser" #nombre="ngModel" [(ngModel)] = "iduser">
+                <mat-form-field>
+                <mat-label>Usuario</mat-label>
+                <input matInput [(ngModel)]="username" name="username" #nombre="ngModel" placeholder="Ex. Belmont" class="form-control" required>
+                </mat-form-field>
+                <br>
+                <mat-form-field>
+                <mat-label>Contraseña</mat-label>
+                <input matInput [(ngModel)]="password" name="password" #nombre="ngModel" placeholder="Ex. ********" class="form-control" required>
+                </mat-form-field>
+                <div class="example-button-row" id="accionesBoton">
+                    <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid" >Acceder</button>
+                </div>
+            </form>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel  [expanded]="true"
+                             (opened)="panelOpenState = true"
+                             (closed)="panelOpenState = false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Control de datos
+            </mat-panel-title>
+            <mat-panel-description>
+             reiniciar/editar/eliminar
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          
+          <mat-list>
+            <h3 mat-subheader>Folios</h3>
+            <mat-list-item>
+              <mat-icon mat-list-icon> insert_chart</mat-icon>
+              <p mat-line>Reinicia los contadores de los folios</p>
+              <small mat-line>*Este movimiento no borra las encuestas</small>
+              <button  mat-flat-button (click)="deleteFolios()" > Eliminar Folios </button>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <h3 mat-subheader>Encuestas</h3>
+            <mat-list-item>
+                <mat-icon mat-list-icon> format_list_numbered</mat-icon>
+                <h4 mat-line>Borrar todas las encuestas</h4>
+                <p mat-line>*Este movimiento no reinicia los folios en el sistema</p>
+                <button mat-flat-button (click)="deleteEncuestas()" > Eliminar Encuestas </button>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <h3 mat-subheader>Datos</h3>
+            <mat-list-item>
+              <mat-icon mat-list-icon>dns</mat-icon>
+              <h4 mat-line>Editar Información</h4>
+              <button mat-flat-button (click)="openDialog()" >Editar</button>
+          </mat-list-item>
+          </mat-list>
+
+        </mat-expansion-panel>
+
+
+      </mat-accordion>
+
+</div>
+<div class="example-button-row">
+  <button mat-raised-button color="primary" (click)="onNoClick()">Minimizar</button>
+</div>
