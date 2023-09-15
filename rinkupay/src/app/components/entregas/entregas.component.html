@@ -39,8 +39,8 @@
 
         <form id="formentrega" #entregaForm="ngForm" (ngSubmit)="registrarEntrega(entregaForm)">
             <mat-list style="text-align: left;">
-                <h3 mat-subheader>Nombre: Trevor Belmont Belmont</h3>
-                <h3 style="margin-top: -25px;" mat-subheader>ROL: Trevor Belmont Belmont</h3>
+                <h3 mat-subheader>Nombre: {{usuarioResultado}}</h3>
+                <h3 style="margin-top: -25px;" mat-subheader>ROL: {{rolUsuario}}</h3>
 
                 <mat-list-item>
                     <p mat-line>Indica tu fecha laboral :</p>

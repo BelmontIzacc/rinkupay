@@ -17,7 +17,7 @@
 }
 
 .example-header-image {
-    background-image: url('../../../../assets/upiizIpn.png');
+    background-image: url('../../../../assets/pay.JPG');
     background-size: cover;
 }
 
@@ -63,7 +63,7 @@ form {
 }
 
 .example-header-image2 {
-    background-image: url('../../../../assets/upiizIpn.png');
+    background-image: url('../../../../assets/pay.JPG');
     background-size: cover;
 }
 
@@ -100,15 +100,32 @@ table {
 .example-button-row button {
     display: table-cell;
     margin-right: 8px;
-  }
-  
-  .example-flex-container {
+}
+
+.example-flex-container {
     display: flex;
-    
-  }
-  
-  .example-button-container {
+
+}
+
+.example-button-container {
     display: flex;
     justify-content: center;
-    
-  }
+
+}
+
+.tabla-container {
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    /* Fondo semitransparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

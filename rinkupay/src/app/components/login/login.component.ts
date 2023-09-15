@@ -46,9 +46,7 @@ export class LoginComponent implements OnInit {
     } else {
       const user = form.value.user;
       const clave = form.value.password;
-      console.log(form.value);
       this.usuarioServicio.logeoUsuario(user, clave).subscribe(respuesta => {
-        console.log(respuesta);
         if (respuesta.estatus) {
           const user = {
             token: respuesta.token,

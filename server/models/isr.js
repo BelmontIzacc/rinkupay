@@ -17,6 +17,7 @@ const isrShema = new Schema({
     'tasa_base': { type: Number, required: true },
     'limite': { type: Number, required: true },
     'tasa_ad': { type: Number, required: true },
+    'dia_corte': { type: Number, required: true },
     'creacion': { type: Date },
     'actualizado': { type: Date }
 });

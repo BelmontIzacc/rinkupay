@@ -11,10 +11,12 @@ const usuarioModel = require("../models/usuario");
 const rolModel = require("../models/rol");
 const coModel = require("../models/corte");
 const enModel = require("../models/entrega");
+const isrModel = require("../models/isr")
 
 const jwt = require('jsonwebtoken');
 
 const tk = "zcz0au22eiz3s23l4oie2V222";
+
 /**
  * @name registro
  * @author IIB
@@ -24,7 +26,6 @@ const tk = "zcz0au22eiz3s23l4oie2V222";
  * @param no_empleado Numero de identificacion del usuario.
  * @param clave Contraseña para ingreso al sistema.
  * @param tipo_usuario Tipo de usuario, false para empleado, true para administrador.
- * @param fecha Fecha en la cual se reporta la entrega.
  * @param rol Identificador de la coleccion ROL para determinar a que tipo de rol pertenece el usuario.
  * @param isr Identificador de la coleccion ISR sobre la retencion sobre el salario que se realizara al empleado.
  * @returns { estatus: true, us: '...'} | 
@@ -77,8 +78,19 @@ usuarioCtrl.registro = async (req, res) => {
         corte_md.pago_neto = null;
         corte_md.hrs_total = null;
         corte_md.EN = [];
+
+        const isr = await isrModel.find().sort({ creacion: -1 });
+        const isrReg = isr[0];
+        const diaCorteIsr = isrReg.dia_corte; // dia de corte indicado por el ISR
+        const fechaBase = new Date();
+        if (fechaBase.getDate() <= diaCorteIsr) {
+            corte_md.corte = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), diaCorteIsr);
+        } else {
+            corte_md.corte = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + 1, diaCorteIsr);
+        }
+
         corte_md.creacion = new Date();
-        corte_md.actualizado = new Date();
+        corte_md.actualizado = fechaBase;
         await corte_md.save();
 
         const idCorte = corte_md._id;
@@ -93,6 +105,53 @@ usuarioCtrl.registro = async (req, res) => {
         us: id
     });
 }
+
+/**
+ * @name actualizarUser
+ * @author IIB
+ * @version 0.0.2
+ * @description Actualiza la informacion basica del usuario
+ * @param nombre Nombre completo del usuario.
+ * @param no_empleado Numero de identificacion del usuario.
+ * @param rol Identificador de la coleccion ROL para determinar a que tipo de rol pertenece el usuario.
+ * @returns { estatus: true, us: '...'} | 
+ */
+usuarioCtrl.actualizarUser = async (req, res) => {
+    const id = req.body.id;
+    const nombre = req.body.nombre;
+    const no_empleado = req.body.no_empleado;
+    const rol = req.body.rol;
+
+    const userFind = await usuarioModel.findOne({ '_id': id });
+    if (!userFind) {
+        res.json({
+            estatus: false,
+            us: "No existe el usuario indicado"
+        });
+        return;
+    }
+    if (userFind.no_empleado !== no_empleado) {
+        const buscarOtroUsuario = await usuarioModel.findOne({ 'no_empleado': no_empleado });
+        if (buscarOtroUsuario) {
+            res.json({
+                estatus: false,
+                us: "Ya existe el numero de empleado registrado"
+            });
+            return;
+        }
+    }
+
+    await userFind.updateOne({
+        nombre: nombre,
+        no_empleado: no_empleado,
+        ROL: rol
+    });
+    res.json({
+        estatus: true,
+        us: id
+    });
+}
+
 
 /**
  * @name login
@@ -247,7 +306,7 @@ usuarioCtrl.agregrRol = async (req, res) => {
  * @description Recupera todos los registros de ROL
  * @returns { estatus: true, rols: [{'...'}] 
  */
-usuarioCtrl.obtenerROL = async(req, res) => {
+usuarioCtrl.obtenerROL = async (req, res) => {
     const rols = await rolModel.find();
 
     res.json({
@@ -263,7 +322,7 @@ usuarioCtrl.obtenerROL = async(req, res) => {
  * @description Elimina todos los registros de usuarios pertenecientes a un id
  * @returns { estatus: true, rols: [{'...'}] 
  */
-usuarioCtrl.eliminarUsuario = async(req, res) => {
+usuarioCtrl.eliminarUsuario = async (req, res) => {
     const no_empleado = req.params.empleado;
 
     const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
@@ -277,9 +336,9 @@ usuarioCtrl.eliminarUsuario = async(req, res) => {
 
     const userId = userFind._id;
     await coModel.deleteMany({ 'US': userId });
-    await enModel.deleteMany({'US': userId});
+    await enModel.deleteMany({ 'US': userId });
     await usuarioModel.deleteMany({ 'no_empleado': no_empleado });
-    
+
     res.json({
         estatus: true,
         us: userId

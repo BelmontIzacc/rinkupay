@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{titulo}}</h1>
+<mat-divider></mat-divider>
+<div mat-dialog-content>
+  <br>
+    <h3>{{mensaje1}}</h3>
+    <h3>{{mensaje2}}</h3>
+</div>
+<mat-divider></mat-divider>
+<div mat-dialog-actions class="example-button-row">
+  <button mat-raised-button color="primary" (click)="onNoClick()" cdkFocusInitial >Cancelar</button>
+  <button mat-raised-button style="background-color: brown;" color="primary" (click)="onYesClick()">Borrar</button>
+</div>

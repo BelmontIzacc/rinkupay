@@ -10,6 +10,7 @@ const nominaCtrl = {};
 const isrModel = require("../models/isr");
 const enModel = require("../models/entrega");
 const coModel = require("../models/corte");
+const usuarioModel = require("../models/usuario");
 
 /**
  * @name registrar_isr
@@ -25,6 +26,7 @@ nominaCtrl.registrar_isr = async (req, res) => {
     const tasa_base = req.body.base;
     const limite = req.body.limite;
     const adic = req.body.adicional;
+    const dia_corte = req.body.dia_corte;
 
     const isr = new isrModel();
     isr.tasa_base = tasa_base;
@@ -32,6 +34,7 @@ nominaCtrl.registrar_isr = async (req, res) => {
     isr.tasa_ad = adic;
     isr.creacion = new Date();
     isr.actualizado = new Date();
+    isr.dia_corte = 24;
     await isr.save()
 
     const id = isr._id;
@@ -46,11 +49,11 @@ nominaCtrl.registrar_isr = async (req, res) => {
  * @name recuperarISR
  * @author IIB
  * @version 0.0.2
- * @description Recupera el registro ISR.
+ * @description Recupera el registro mas actual del ISR.
  * @returns { estatus: true, isr: {'...'}} | 
  */
 nominaCtrl.obtenerIsr = async (req, res) => {
-    const isr = await isrModel.find();
+    const isr = await isrModel.find().sort({ creacion: -1 });
 
     res.json({
         estatus: true,
@@ -70,10 +73,10 @@ nominaCtrl.obtenerUserCo = async (req, res) => {
     const cortes = await coModel.find().sort({ creacion: -1 });
     const unicCo = [];
     const idsReg = [""];
-    for (let co of cortes){
-        const userId  = co.US;
+    for (let co of cortes) {
+        const userId = co.US;
         const existe = idsReg.indexOf(elemento => elemento === userId);
-        if(existe === -1){
+        if (existe === -1) {
             idsReg.push(userId);
             unicCo.push(co);
         }
@@ -109,26 +112,125 @@ nominaCtrl.registrar_en = async (req, res) => {
         return;
     }
 
+    const actualizarCorte = [];
+
+    // regitrar entrega
     const en = new enModel();
     en.US = us;
-    en.CO = co;
+    en.CO = "Pendiente";
     en.entregas = entregas;
     en.horas = hora;
-    en.fecha = fecha;  // cambiar por date
+    en.fecha = fecha;
     en.creacion = new Date();
     en.actualizado = new Date();
     await en.save();
 
-    const idEn = en._id;
-    const enArray = corte.EN;
-    enArray.push(idEn);
+    // validar a que corte va
+    const fechaCreacionCorte = new Date(corte.creacion); // fecha del registro corte
+    fechaCreacionCorte.setHours(0);
+    fechaCreacionCorte.setMinutes(0);
+    fechaCreacionCorte.setSeconds(0);
+    fechaCreacionCorte.setMilliseconds(0);
+    const fechaFinCorte = new Date(corte.corte);
+    const isr = await isrModel.find().sort({ creacion: -1 });
+    const isrReg = isr[0];
+    const diaCorteIsr = isrReg.dia_corte; // dia de corte indicado por el ISR
 
-    await coModel.findByIdAndUpdate(co, { EN: enArray });
+    const fechaEntrega = new Date(fecha); // dia del registro de la entrega
+    if (fechaEntrega.getTime() >= fechaCreacionCorte.getTime() && fechaEntrega.getTime() <= fechaFinCorte.getTime()) {
+        const idEn = en._id;
+        const enArray = corte.EN;
+        enArray.push(idEn);
 
+        await corte.updateOne({ EN: enArray });
+        await en.updateOne({
+            CO: "" + co
+        });
+        actualizarCorte.push(co);
+    } else {
+        if (fechaEntrega.getTime() > fechaFinCorte.getTime()) {
+            const nombre_mes = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"]
+            const mes = new Date().getMonth() + 1;
+            const year = new Date().getFullYear();
+            const idEn = en._id;
+
+            const fechaBase = new Date();
+            const corte_md = new coModel();
+            corte_md.US = us;
+            corte_md.periodo = nombre_mes[mes] + " " + year;
+            corte_md.entregas = null;
+            corte_md.pago_bruto = null;
+            corte_md.pago_neto = null;
+            corte_md.hrs_total = null;
+            corte_md.EN = [idEn];
+            corte_md.corte = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + 1, diaCorteIsr);
+            corte_md.creacion = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), diaCorteIsr + 1);
+            corte_md.actualizado = fechaBase;
+            await corte_md.save();
+            await en.updateOne({
+                CO: "" + corte_md._id
+            });
+
+            const buscarUsuario = await usuarioModel.findOne({ _id: us });
+            const coArray = buscarUsuario.CO;
+            coArray.push("" + corte_md._id)
+            await buscarUsuario.updateOne({
+                CO: coArray
+            });
+            actualizarCorte.push(corte_md._id)
+            actualizarCorte.push(co);
+
+        } else {
+            const idEn = en._id;
+            await enModel.deleteOne({ _id: idEn });
+            res.send({
+                estatus: false,
+                mensaje: "El registro esta fuera del corte"
+            });
+            return;
+        }
+    }
+
+    await calcularCorte(actualizarCorte);
     res.json({
         estatus: true,
-        en: idEn
+        en: en._id
     });
+}
+
+/**
+ * @name calcularCorteHrsEntregas
+ * @author IIB
+ * @version 0.0.2
+ * @description Calcula el total de horas trabajadas y entregas realizadas.
+ * @param idsCorte Array de identificadores de corte, a los cuales se calculara sus horas y entregas totales
+ */
+calcularCorte = async (idsCorte) => {
+    for (let idCo of idsCorte) {
+        const cortes = await coModel.findOne({ '_id': idCo });
+        if (cortes) {
+            const entregas = cortes.EN;
+            const arrayEntregas = [];
+
+            for (let entrega of entregas) {
+                const entregaRef = enModel.findOne({ '_id': entrega });
+                arrayEntregas.push(entregaRef);
+            }
+            const entregasResueltas = await Promise.all(arrayEntregas);
+            if (entregasResueltas.length > 0) {
+                let total_hrs = 0;
+                let total_entregas = 0;
+                for (let refRes of entregasResueltas) {
+                    total_hrs += refRes.horas;
+                    total_entregas += refRes.entregas;
+                }
+                await cortes.updateOne({
+                    entregas: total_entregas,
+                    hrs_total: total_hrs
+                });
+            }
+        }
+    }
 }
 
 module.exports = nominaCtrl;

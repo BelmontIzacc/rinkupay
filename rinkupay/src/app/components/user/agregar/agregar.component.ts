@@ -1,6 +1,3 @@
-import { DialogInfoComponent } from './../dialog-info/dialog-info.component';
-
-
 /**
  * @autor Belmont
  * @date 14/09/2023
@@ -13,24 +10,21 @@ import { DialogInfoComponent } from './../dialog-info/dialog-info.component';
 
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MainUserComponent } from '../main-user/main-user.component';
 import { NgForm } from '@angular/forms';
-import { UserService } from "./../../../services/user.service";
-import { NominaService } from "./../../../services/nomina.service";
+import { UserService } from "../../../services/user.service";
+import { NominaService } from "../../../services/nomina.service";
 
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 
-import { Router } from '@angular/router';
-
 @Component({
 
   selector: 'app-dialog',
-  templateUrl: './dialog.component.html',
-  styleUrls: ['./dialog.component.css']
+  templateUrl: './agregar.component.html',
+  styleUrls: ['./agregar.component.css']
 
 })
-export class DialogComponent implements OnInit {
+export class AgregarComponent implements OnInit {
 
   /** control de tiempo para menssajes emergentes */
   private config: MatSnackBarConfig;
@@ -42,8 +36,8 @@ export class DialogComponent implements OnInit {
     userName: ""
   }
 
-  rolSelect: { tipo: string, addMore: boolean, id: string } = { tipo: "", addMore: false, id: "" };
-  tipoRols: Array<{ tipo: string, addMore: boolean, id: string }> = [];
+  public rolSelect: { tipo: string, addMore: boolean, id: string } = { tipo: "", addMore: false, id: "" };
+  public tipoRols: Array<{ tipo: string, addMore: boolean, id: string }> = [];
 
   private isr = "";
 
@@ -53,7 +47,7 @@ export class DialogComponent implements OnInit {
     private _snackBar: MatSnackBar,
     private userService: UserService,
     private nominaService: NominaService,
-    public dialogRef: MatDialogRef<MainUserComponent>,
+    public dialogRef: MatDialogRef<AgregarComponent>,
     public dialog: MatDialog,
 
   ) {
@@ -68,7 +62,7 @@ export class DialogComponent implements OnInit {
 
   }
 
-  agregarUsuario(form: NgForm) {
+  public agregarUsuario(form: NgForm) {
     const password = form.value.password;
     const user = form.value.user;
     const rol = form.value.rols;
@@ -100,24 +94,25 @@ export class DialogComponent implements OnInit {
     // guardar usuario
     this.userService.guardarUsuario(addUser).subscribe(respuesta => {
       if (respuesta.estatus) {
-        console.log(respuesta);
         this.openSnackBar("Usuario registrado");
+        form.reset()
       } else {
         this.openSnackBar(respuesta.us);
       }
+      
     })
   }
 
-  onNoClick(): void {
+  public onNoClick(): void {
     this.dialogRef.close();
   }
 
   /** Muestra mensajes emergentes */
-  openSnackBar(message) {
+  private openSnackBar(message) {
     this._snackBar.open(message, 'close', this.config);
   }
 
-  obtenerRols() {
+  private obtenerRols() {
     this.userService.obtenerRoles().subscribe(respuesta => {
       if (respuesta.estatus) {
         this.tipoRols.push({
@@ -137,7 +132,7 @@ export class DialogComponent implements OnInit {
     });
   }
 
-  obtenerRegIsr() {
+  private obtenerRegIsr() {
     this.nominaService.obtenerIsr().subscribe(respuesta => {
       if (respuesta.estatus) {
         this.isr = respuesta.isr._id;

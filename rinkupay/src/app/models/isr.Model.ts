@@ -17,6 +17,7 @@ export class ISR {
   tasa_base: number;
   limite: number;
   tasa_ad: number;
+  dia_corte: number;
   creacion: Date;
   actualizado: Date;
 }

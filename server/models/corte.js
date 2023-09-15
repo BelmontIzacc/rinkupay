@@ -21,7 +21,6 @@ const coShema = new Schema({
     'pago_neto': { type: Number },
     'hrs_total': { type: Number },
     'corte': { type: Date },
-    'inicio': { type: Date },
     'EN': { type: Array },
     'creacion': { type: Date },
     'actualizado': { type: Date }

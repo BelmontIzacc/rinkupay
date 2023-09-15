@@ -1,0 +1,23 @@
+.example-button-row button,
+.example-button-row a {
+    margin-right: 8px;
+}
+
+.example-button-row button {
+    margin-right: 4px;
+    background-color: #ffffff;
+    color: black;
+}
+
+.colorButton {
+    background-color: #571e1e;
+}
+
+.example-button-row {
+    text-align: right;
+    justify-content: space-between;
+}
+
+.example-button-row button {
+    margin-right: 4px;
+}

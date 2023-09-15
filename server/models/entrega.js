@@ -14,12 +14,13 @@ const { Schema } = mongoose;
 
 /** Declaración de variables para el modelo datos de consulta */
 const ensShema = new Schema({
-    'US': { type: String, required: true },
-    'entregas': { type: Number, required: true },
-    'horas': { type: Number, required: true },
-    'fecha': { type: Date },
-    'creacion': { type: Date },
-    'actualizado': { type: Date }
+  'US': { type: String, required: true },
+  'CO': { type: String, required: true },
+  'entregas': { type: Number, required: true },
+  'horas': { type: Number, required: true },
+  'fecha': { type: Date },
+  'creacion': { type: Date },
+  'actualizado': { type: Date }
 });
 
 module.exports = mongoose.model('ens', ensShema); // coleccion , esquema

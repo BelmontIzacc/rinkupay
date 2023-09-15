@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Editar</h1>
+<div mat-dialog-content>
+
+  <mat-card class="example-card">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>Cambiar la informacion del usuario</mat-card-title>
+    </mat-card-header>
+
+    <form class="example-form center" id="form" #UserEditForm="ngForm" (ngSubmit)="editarInformacion(UserEditForm)">
+      <mat-card-content>
+        <mat-form-field class="example-full-width">
+          <mat-label>Nombre</mat-label>
+          <input matInput placeholder="Ex. Isaul Belmonte" name="nombre" #nombre="ngModel" [(ngModel)]="empleado.nombre"
+            class="form-control" autofocus required>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Numero de empleado/Usuario</mat-label>
+          <input matInput placeholder="Ex. 091294IB" name="noEmpleado" #nombre="ngModel" [(ngModel)]="empleado.no_empleado"
+            class="form-control" required>
+        </mat-form-field>
+        <br>
+        <label id="example-radio-group-label">Rol del usuario</label>
+        <mat-radio-group matInput aria-labelledby="example-radio-group-label" class="example-radio-group" name="rols"
+          [(ngModel)]="rolSelect" #nombre="ngModel">
+          <mat-radio-button class="example-radio-button" *ngFor="let rol of tipoRols" [value]="rol">
+            {{rol.tipo}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button type="submit" color="primary" [disabled]="UserEditForm.invalid">Actualizar</button>
+      </mat-card-actions>
+
+    </form>
+  </mat-card>
+
+</div>
+<div class="example-button-row">
+  <button mat-raised-button color="primary" (click)="onNoClick()">Minimizar</button>
+</div>

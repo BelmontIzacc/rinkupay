@@ -5,7 +5,9 @@
       <mat-card-title>Información del sistema</mat-card-title>
       <mat-card-subtitle>RinkuPay</mat-card-subtitle>
     </div>
-
+    <div>
+      <h4>Numero de registros: <strong>{{totalRegistros}}</strong></h4>
+    </div>
     <div>
       <a mat-icon-button class="example-icon" (click)="openDialog()">
         <mat-icon>add_circle_outline</mat-icon>
@@ -22,13 +24,22 @@
   <mat-card-content>
     <br>
 
-    <mat-form-field>
+    <mat-form-field *ngIf="!isLoading">
       <mat-label>Buscar</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Ejem. Belmont">
     </mat-form-field>
 
-    <div class="mat-elevation-z8 example-container">
-      <table mat-table [dataSource]="dataSource" matSort>
+    <div class="mat-elevation-z8 example-container tabla-container">
+
+      <div *ngIf="isLoading" class="overlay">
+        <mat-progress-spinner [color]=color [mode]=mode></mat-progress-spinner>
+      </div>
+
+      <div *ngIf="isRegistros" class="overlay">
+        <p>Sin registros</p>
+      </div>
+
+      <table mat-table [dataSource]="dataSource" matSort *ngIf="!isLoading">
 
         <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
@@ -58,12 +69,14 @@
             <div class="example-button-row">
               <div class="example-flex-container">
                 <div class="example-button-container">
-                  <button mat-mini-fab color="primary" aria-label="Example icon button with a delete icon">
+                  <button mat-mini-fab color="primary" (click)="editarUser(element)"
+                    aria-label="Example icon button with a delete icon">
                     <mat-icon>edit</mat-icon>
                   </button>
                 </div>
                 <div class="example-button-container">
-                  <button mat-mini-fab color="warn" (click)="eliminarUsuario(element.id)" aria-label="Example icon button with a delete icon">
+                  <button mat-mini-fab color="warn" (click)="eliminarUsuario(element)"
+                    aria-label="Example icon button with a delete icon">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </div>

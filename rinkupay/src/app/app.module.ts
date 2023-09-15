@@ -19,9 +19,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Error404Component } from './components/error404/error404.component';
 import { LoginComponent } from './components/login/login.component';
-import { GraciasComponent } from './components/gracias/gracias.component';
+import { EntregasComponent } from './components/entregas/entregas.component';
 import { MainUserComponent } from './components/user/main-user/main-user.component';
-import { DialogInfoComponent } from './components/user/dialog-info/dialog-info.component';
+import { EditarComponent } from './components/user/editar/editar.component';
+import { MensajeDialog } from './components/user/mensaje/mensaje.component';
 
 /** modulos para validacion y peticiones http */
 import { ReactiveFormsModule } from '@angular/forms';
@@ -44,13 +45,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
-import { DialogComponent } from './components/user/dialog/dialog.component';
+import { AgregarComponent } from './components/user/agregar/agregar.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
 
 /** 
  * declarando los modulos para su uso dentro del sistema por medio de variables
@@ -61,10 +62,11 @@ import {MatRadioModule} from '@angular/material/radio';
     AppComponent,
     Error404Component,
     LoginComponent,
-    GraciasComponent,
+    EntregasComponent,
     MainUserComponent,
-    DialogComponent,
-    DialogInfoComponent
+    AgregarComponent,
+    EditarComponent,
+    MensajeDialog
   ],
   imports: [
     BrowserModule,
@@ -90,7 +92,7 @@ import {MatRadioModule} from '@angular/material/radio';
     MatExpansionModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatRadioModule
+    MatRadioModule,
   ],
   providers: [Title, MatDatepickerModule],
   bootstrap: [AppComponent],

@@ -10,7 +10,10 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogComponent } from '../dialog/dialog.component';
+import { AgregarComponent } from '../agregar/agregar.component';
+import { EditarComponent } from '../editar/editar.component';
+import { MensajeDialog } from '../mensaje/mensaje.component';
+
 import { UserService } from './../../../services/user.service';
 import { NominaService } from './../../../services/nomina.service';
 
@@ -18,7 +21,10 @@ import { Router } from '@angular/router';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
+import { ThemePalette } from '@angular/material/core';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-main-user',
@@ -31,18 +37,29 @@ export class MainUserComponent implements OnInit {
   public displayedColumns: string[] = ['nombre', 'no_empleado', 'rol', 'corte', 'acciones'];
   public dataSource = new MatTableDataSource<Empleado>([]);
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  public isLoading: boolean = true;
+  public isRegistros: boolean = false;
+  public totalRegistros: number = 0;
 
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  public color: ThemePalette = 'accent';
+  public mode: ProgressSpinnerMode = 'indeterminate';
+  private config: MatSnackBarConfig;
+  private duracion = 4;
   /* contructor para inicializar servicios */
   constructor(
 
     public dialog: MatDialog,
     private userService: UserService,
     private nominaService: NominaService,
-    private router: Router
+    private router: Router,
+    private _snackBar: MatSnackBar,
 
   ) {
+    this.config = new MatSnackBarConfig();
+    this.config.duration = 1000 * this.duracion;
     this.cargarDatosEmpleados();
   }
 
@@ -61,7 +78,6 @@ export class MainUserComponent implements OnInit {
             this.userService.obtenerEmpleados().subscribe(respuesta => {
               if (respuesta.estatus) {
                 const rols = resRoles.rols;
-                console.log(rols)
                 const cos = resCo.cos;
                 const empleados: Array<Empleado> = [];
 
@@ -69,7 +85,7 @@ export class MainUserComponent implements OnInit {
                   const id = empleado._id;
                   const nombre = empleado.nombre;
                   const no_empleado = empleado.no_empleado;
-                  
+
                   const buscarRol = rols.find(data => data._id == empleado.ROL)
                   const rol = buscarRol.tipo;
 
@@ -86,9 +102,16 @@ export class MainUserComponent implements OnInit {
                   })
                 }
 
+                this.totalRegistros = empleados.length;
                 this.dataSource = new MatTableDataSource(empleados);
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
+                this.isLoading = false;
+                if(empleados.length === 0){
+                  this.isRegistros = true; 
+                }else {
+                  this.isRegistros = false;
+                }
               }
             })
           }
@@ -97,20 +120,57 @@ export class MainUserComponent implements OnInit {
     })
   }
 
-  public eliminarUsuario(id: string){
-    console.log(id)
+  public eliminarUsuario(usuario: Empleado) {
+
+    const dialogRef = this.dialog.open(MensajeDialog, {
+      width: 'auto',
+      height: 'auto',
+      data: { titulo: "Eliminar usuario", mensaje1: "Quieres borrar al usuario: " + usuario.nombre, mensaje2: "Con el numero de empleado: " + usuario.no_empleado }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == true) {
+        this.userService.eliminarUsuario(usuario.no_empleado).subscribe(respuesta => {
+          if (respuesta.estatus) {
+            this.mostarMensaje("Se elimino el usuario: " + usuario.nombre + "")
+            this.cargarDatosEmpleados();
+          }
+        })
+      }
+    });
+
+  }
+
+  public editarUser(seleccionado: Empleado) {
+    const usuario: Empleado = {
+      acciones: seleccionado.acciones,
+      corte: seleccionado.corte,
+      id: seleccionado.id,
+      no_empleado: seleccionado.no_empleado,
+      nombre: seleccionado.nombre,
+      rol: seleccionado.rol
+    }
+    const dialogRef = this.dialog.open(EditarComponent, {
+      width: 'auto',
+      height: 'auto',
+      data: { usuario: usuario }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == true) {
+        this.cargarDatosEmpleados();
+      }
+    });
   }
 
   /** Funcion para habrir un modal */
   public openDialog(): void {
-    const dialogRef = this.dialog.open(DialogComponent, {
+    const dialogRef = this.dialog.open(AgregarComponent, {
       width: 'auto',
       height: 'auto',
-      data: { name: "belmont", animal: "Castlevania" }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       this.cargarDatosEmpleados();
     });
   }
@@ -129,6 +189,10 @@ export class MainUserComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  private mostarMensaje(message) {
+    this._snackBar.open(message, 'close', this.config);
   }
 
 }

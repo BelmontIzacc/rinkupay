@@ -153,7 +153,35 @@ export class UserService {
    */
   public eliminarUsuario(no_empleado: string): Observable<{ estatus: boolean, us: string }> {
     let res = new Subject<{ estatus: boolean, us: string }>();
-    this.http.delete(this.URL_API + '/eliminar/'+no_empleado).subscribe((respuesta: any) => {
+    this.http.delete(this.URL_API + '/eliminar/' + no_empleado).subscribe((respuesta: any) => {
+      if (respuesta.estatus) {
+        res.next({ estatus: true, us: respuesta.us });
+      } else {
+        res.next({ estatus: false, us: respuesta.us });
+      }
+    },
+      err => {
+        res.error(err);
+      });
+    return res.asObservable();
+  }
+
+  /**
+   * @description Actualizar usuario
+   * @param id identificador de usuario
+   * @param no_empleado numero de empleado
+   * @param nombre nombre de usuario
+   * @param rol rol del usuario
+   * @returns { estatus: boolean, us: "..."} 
+   */
+  public actualizarUsuario(nombre: string, no_empleado: string, rol: string, id: string): Observable<{ estatus: boolean, us: string }> {
+    let res = new Subject<{ estatus: boolean, us: string }>();
+    this.http.put(this.URL_API + '/actualizar', {
+      id: id,
+      nombre: nombre,
+      no_empleado: no_empleado,
+      rol: rol
+    }).subscribe((respuesta: any) => {
       if (respuesta.estatus) {
         res.next({ estatus: true, us: respuesta.us });
       } else {
