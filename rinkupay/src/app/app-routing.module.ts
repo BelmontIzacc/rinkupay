@@ -16,13 +16,15 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { auth } from './guard/auth';
 import { MainUserComponent } from './components/user/main-user/main-user.component';
+import { ReporteComponent } from './components/user/reporte/reporte.component';
 
 /** Arreglo para declaracion y enrutacion dentro del sistema */
 const routes: Routes = [
-  { path: '', component: EntregasComponent},
-  { path: 'login', component: LoginComponent},
-  { path: 'RINKUPAY/User', component: MainUserComponent, canActivate: [auth]}, // solo usuario auth
-  { path: '**', component: Error404Component} // en caso de no encontrar alguna ruta ** es el default
+  { path: '', component: EntregasComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'RinkyPay', component: MainUserComponent, canActivate: [auth] }, // solo usuario auth
+  { path: 'RinkyPay/corte', component: ReporteComponent, canActivate: [auth] }, // solo usuario auth
+  { path: '**', component: Error404Component } // en caso de no encontrar alguna ruta ** es el default
 ];
 
 @NgModule({

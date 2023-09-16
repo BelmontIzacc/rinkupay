@@ -1,11 +1,29 @@
+/**
+ * @autor Belmont
+ * @date 13/09/2023
+ */
+
+/**
+  * @description componente que permite registrar horas y entregas en el sistema
+  * 
+*/
+
+// import de angular components
 import { Component, OnInit } from '@angular/core';
+
+// otros imports
 import { NgForm } from '@angular/forms';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+
+// import de servicios
 import { UserService } from '../../services/user.service';
 import { NominaService } from '../../services/nomina.service';
+
+// import de modelos
 import { User } from '../../models/user.Model';
 
+// import de angular material
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-gracias',
@@ -24,6 +42,7 @@ export class EntregasComponent implements OnInit {
   public horas = 0;
   public fecha;
 
+  // variables para guardar los rangos de fecha para indicar entrega
   public dateMinLimit: Date;
   public dateMaxLimit: Date;
   public fechaEntrega;
@@ -32,9 +51,11 @@ export class EntregasComponent implements OnInit {
   public usuarioResultado = "";
   public rolUsuario = "";
 
+  // configuracion de los mensajes emergentes
   private config: MatSnackBarConfig;
   private duracion = 4;
 
+  // Guarda los ids correspondientes de corte y usuario para indicarlos al registrar la entrega
   private coId = "";
   private usId = "";
 
@@ -59,6 +80,10 @@ export class EntregasComponent implements OnInit {
     this.events.push(`${event.value}`);
   }
 
+  /**
+   * @description Busca un usuraio dentro del sistema segun su numero de empleado y clave para almacenar los datos
+   * @param form contiene los datos requeridos para buscar un usuario dentro del sistema, user : numero de empleado, password: clave de ingreso
+   */
   public buscarUsuario(form: NgForm) {
     const noempleado = form.value.user;
     const clave = form.value.password;
@@ -86,6 +111,10 @@ export class EntregasComponent implements OnInit {
     })
   }
 
+  /**
+   * @description Registra la cantidad de entregas y horas trabajadas segun el usuario indicado
+   * @param form Contiene los datos ingresados en el formulario para ser registrados en la base de datos
+   */
   public registrarEntrega(form: NgForm) {
     let entregas = form.value.entregas;
     let horas = form.value.horas;
@@ -114,6 +143,10 @@ export class EntregasComponent implements OnInit {
     });
   }
 
+  /**
+   * @description Muestra mensajes emergentes
+   * @param message Mensaje a mostrar
+   */
   private mostarMensaje(message) {
     this._snackBar.open(message, 'close', this.config);
   }

@@ -1,0 +1,13 @@
+.example-card {
+    max-width: 430px;
+    margin: 100px auto;
+}
+
+.example-header-image {
+    background-image: url('../../../../assets/pay.JPG');
+    background-size: cover;
+}
+
+table {
+    width: 100%;
+}

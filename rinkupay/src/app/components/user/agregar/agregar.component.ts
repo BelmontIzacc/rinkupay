@@ -8,12 +8,16 @@
   * 
 */
 
+// import angulas components
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgForm } from '@angular/forms';
+
+// import de servicios
 import { UserService } from "../../../services/user.service";
 import { NominaService } from "../../../services/nomina.service";
 
+// import angular material
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -26,7 +30,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class AgregarComponent implements OnInit {
 
-  /** control de tiempo para menssajes emergentes */
+  // control de tiempo para menssajes emergentes
   private config: MatSnackBarConfig;
   private duracion = 6;
 
@@ -36,12 +40,14 @@ export class AgregarComponent implements OnInit {
     userName: ""
   }
 
+  // indica que tipo de roles se encuentran registrados y cual fue seleccionado
   public rolSelect: { tipo: string, addMore: boolean, id: string } = { tipo: "", addMore: false, id: "" };
   public tipoRols: Array<{ tipo: string, addMore: boolean, id: string }> = [];
 
+  // guardar el id del isr, para ser indicar en el usuario a agregar
   private isr = "";
 
-  /** Contructor de la clase para el manejo de configuraciones en el sisstema */
+  // Contructor de la clase para el manejo de configuraciones en el sisstema
   constructor(
 
     private _snackBar: MatSnackBar,
@@ -52,6 +58,7 @@ export class AgregarComponent implements OnInit {
 
   ) {
 
+    // configuracion de los mensajes de snak
     this.config = new MatSnackBarConfig();
     this.config.duration = 1000 * this.duracion;
     this.obtenerRols();
@@ -62,6 +69,10 @@ export class AgregarComponent implements OnInit {
 
   }
 
+  /**
+   * @description Agregar un usuario segun los datos ingresados en el formulario
+   * @param form formulario que ocntiene los datos de usuario
+   */
   public agregarUsuario(form: NgForm) {
     const password = form.value.password;
     const user = form.value.user;
@@ -103,15 +114,25 @@ export class AgregarComponent implements OnInit {
     })
   }
 
+  /**
+   * @description Cerrar el modal
+   */
   public onNoClick(): void {
     this.dialogRef.close();
   }
 
-  /** Muestra mensajes emergentes */
+  /**
+   * @description Muestra mensajes emergentes
+   * @param message Mensaje a mostrar
+   */
   private openSnackBar(message) {
     this._snackBar.open(message, 'close', this.config);
   }
 
+  /**
+   * @description Recupera los rols registrados para los empleados de la base de datos
+   * par indicarlos en el modal para ser agregados
+   */
   private obtenerRols() {
     this.userService.obtenerRoles().subscribe(respuesta => {
       if (respuesta.estatus) {
@@ -132,6 +153,9 @@ export class AgregarComponent implements OnInit {
     });
   }
 
+  /**
+   * @description Recupera el registro mas actual de ISR para recuperar su id e indicarlo en el usuario a agregar
+   */
   private obtenerRegIsr() {
     this.nominaService.obtenerIsr().subscribe(respuesta => {
       if (respuesta.estatus) {

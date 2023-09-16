@@ -19,6 +19,8 @@ const coShema = new Schema({
     'entregas': { type: Number },
     'pago_bruto': { type: Number },
     'pago_neto': { type: Number },
+    'despensa': { type: Number },
+    'detalles': { type: Object },
     'hrs_total': { type: Number },
     'corte': { type: Date },
     'EN': { type: Array },

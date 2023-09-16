@@ -8,7 +8,9 @@
   * 
 */
 
+// imports de angular component
 import { Component, Inject } from '@angular/core';
+// import de angular material
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -24,17 +26,25 @@ export class MensajeDialog {
 
     constructor(
         public dialogRef: MatDialogRef<MensajeDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: {titulo: string, mensaje1: string, mensaje2: string}) { 
-            this.titulo = this.data.titulo;
-            this.mensaje1 = this.data.mensaje1;
-            this.mensaje2 = this.data.mensaje2;
-        }
+        @Inject(MAT_DIALOG_DATA) public data: { titulo: string, mensaje1: string, mensaje2: string }) {
+        this.titulo = this.data.titulo;
+        this.mensaje1 = this.data.mensaje1;
+        this.mensaje2 = this.data.mensaje2;
+    }
 
+    /**
+      * @description Cerrar la ventana emergente y retornar un false,
+      * retorna "false" si se preciono el boton "cancelar"
+      */
     public onNoClick(): void {
         this.dialogRef.close(false);
     }
 
-    public onYesClick(): void{
+  /**
+    * @description Cerrar la ventana emergente y retornar un true,
+    * retorna "true" si se preciono el boton "aceptar"
+   */
+    public onYesClick(): void {
         this.dialogRef.close(true);
     }
 

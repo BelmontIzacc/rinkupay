@@ -9,10 +9,15 @@
   * 
 */
 
+// import de angular component
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgForm } from '@angular/forms';
+
+// import de angular material
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+
+// import de servicios
 import { UserService } from "../../../services/user.service";
 
 @Component({
@@ -44,7 +49,11 @@ export class EditarComponent implements OnInit {
     this.obtenerRols()
   }
 
-  editarInformacion(form: NgForm) {
+  /**
+   * @description Actualiza la informacion del sistema
+   * @param form Formulrio que contiene los datos a actualizar del usuario
+   */
+  public editarInformacion(form: NgForm) {
     const nombre = form.value.nombre;
     const rol = form.value.rols.id;
     const no_empleado = form.value.noEmpleado;
@@ -58,6 +67,7 @@ export class EditarComponent implements OnInit {
     })
 
   }
+
   /** funcion que al iniciar la pagina carga la información o inicia funciones espesificadas */
   ngOnInit(): void { }
 
@@ -72,10 +82,13 @@ export class EditarComponent implements OnInit {
   }
 
   /** Muestra mensajes emergentes */
-  openSnackBar(message) {
+  public openSnackBar(message) {
     this._snackBar.open(message, 'close', this.config);
   }
 
+  /**
+   * @description Recupera los rols registrados dentro de la base de datos para mostrar dentro del modal
+   */
   private obtenerRols() {
     this.userService.obtenerRoles().subscribe(respuesta => {
       if (respuesta.estatus) {

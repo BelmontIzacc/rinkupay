@@ -22,7 +22,7 @@ import { CO } from '../models/co.Model';
 
 export class NominaService {
 
-  /** Declaración de url de direccion de peticiones de usuario al servidor  */
+  /** Declaración de url de direccion de peticiones de nomina al servidor  */
   readonly URL_API = 'http://localhost:3000/rinkupayapi/nomina';
 
   /** constructor del sistema inicializando el objeto para peticiones http */
@@ -88,6 +88,3 @@ export class NominaService {
     }
 
 }
-
-/// iso29110 -> precio/3 = 2300  -> lo paga ella [6874]
-/// 

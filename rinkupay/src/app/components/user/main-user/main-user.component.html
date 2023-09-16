@@ -24,73 +24,176 @@
   <mat-card-content>
     <br>
 
-    <mat-form-field *ngIf="!isLoading">
-      <mat-label>Buscar</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Ejem. Belmont">
-    </mat-form-field>
+    <mat-horizontal-stepper #stepper>
+      <mat-step [stepControl]="firstFormGroup">
+        <ng-template matStepLabel>General</ng-template>
 
-    <div class="mat-elevation-z8 example-container tabla-container">
+        <mat-form-field *ngIf="!isLoading">
+          <mat-label>Buscar</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Ejem. Belmont">
+        </mat-form-field>
 
-      <div *ngIf="isLoading" class="overlay">
-        <mat-progress-spinner [color]=color [mode]=mode></mat-progress-spinner>
-      </div>
+        <div class="mat-elevation-z8 example-container tabla-container">
 
-      <div *ngIf="isRegistros" class="overlay">
-        <p>Sin registros</p>
-      </div>
+          <div *ngIf="isLoading" class="overlay">
+            <mat-progress-spinner [color]=color [mode]=mode></mat-progress-spinner>
+          </div>
 
-      <table mat-table [dataSource]="dataSource" matSort *ngIf="!isLoading">
+          <div *ngIf="isRegistros" class="overlay">
+            <p>Sin registros</p>
+          </div>
 
-        <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
-        </ng-container>
+          <table mat-table [dataSource]="dataSource" matSort *ngIf="!isLoading">
 
-
-        <ng-container matColumnDef="no_empleado">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Numero de empleado </th>
-          <td mat-cell *matCellDef="let element"> {{element.no_empleado}} </td>
-        </ng-container>
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+              <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+            </ng-container>
 
 
-        <ng-container matColumnDef="rol">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> ROL </th>
-          <td mat-cell *matCellDef="let element"> {{element.rol}} </td>
-        </ng-container>
+            <ng-container matColumnDef="no_empleado">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> No Empleado </th>
+              <td mat-cell *matCellDef="let element"> {{element.no_empleado}} </td>
+            </ng-container>
 
-        <ng-container matColumnDef="corte">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Periodo </th>
-          <td mat-cell *matCellDef="let element"> {{element.corte}} </td>
-        </ng-container>
 
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
-          <td mat-cell *matCellDef="let element">
-            <div class="example-button-row">
-              <div class="example-flex-container">
-                <div class="example-button-container">
-                  <button mat-mini-fab color="primary" (click)="editarUser(element)"
-                    aria-label="Example icon button with a delete icon">
-                    <mat-icon>edit</mat-icon>
-                  </button>
+            <ng-container matColumnDef="rol">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> ROL </th>
+              <td mat-cell *matCellDef="let element"> {{element.rol}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="corte">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Periodo </th>
+              <td mat-cell *matCellDef="let element"> {{element.corte}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="entregas">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Entregas </th>
+              <td mat-cell *matCellDef="let element"> {{element.entregas}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="horas">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Horas </th>
+              <td mat-cell *matCellDef="let element"> {{element.horas}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+              <td mat-cell *matCellDef="let element">
+                <div class="example-button-row">
+                  <div class="example-flex-container">
+                    <div class="example-button-container">
+                      <button mat-mini-fab color="primary" (click)="editarUser(element)"
+                        aria-label="Example icon button with a delete icon">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </div>
+                    <div class="example-button-container">
+                      <button mat-mini-fab color="warn" (click)="eliminarUsuario(element)"
+                        aria-label="Example icon button with a delete icon">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                    <div class="example-button-container">
+                      <button mat-mini-fab color="accent" (click)="mostrarDetalles(element)"
+                        aria-label="Example icon button with a delete icon">
+                        <mat-icon>description</mat-icon>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div class="example-button-container">
-                  <button mat-mini-fab color="warn" (click)="eliminarUsuario(element)"
-                    aria-label="Example icon button with a delete icon">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+          <!--<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>  -->
+        </div>
+
+      </mat-step>
+      <mat-step [stepControl]="secondFormGroup">
+        <form [formGroup]="secondFormGroup">
+          <ng-template matStepLabel>Detalles</ng-template>
+
+          <!-- Segunda tabla 
+          <mat-form-field *ngIf="!isLoading">
+            <mat-label>Buscar</mat-label>
+            <input matInput (keyup)="applyFilterDetails($event)" placeholder="Ejem. 12345">
+          </mat-form-field>
+          -->
+          <br>
+
+          <div class="mat-elevation-z8 example-container tabla-container">
+
+            <div *ngIf="isLoading" class="overlay">
+              <mat-progress-spinner [color]=color [mode]=mode></mat-progress-spinner>
             </div>
-          </td>
-        </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
+            <div *ngIf="isRegistros" class="overlay">
+              <p>Sin registros</p>
+            </div>
 
-      <!--<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>  -->
-    </div>
+            <table mat-table [dataSource]="dataDetalleSource" matSort *ngIf="!isLoading">
+
+              <ng-container matColumnDef="no_empleado">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> No Empleado </th>
+                <td mat-cell *matCellDef="let detalle"> {{detalle.no_empleado}} </td>
+              </ng-container>
+
+
+              <ng-container matColumnDef="hrs">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> No Horas </th>
+                <td mat-cell *matCellDef="let detalle"> {{detalle.hrs}} </td>
+              </ng-container>
+
+
+              <ng-container matColumnDef="noentregas">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> No Entregas </th>
+                <td mat-cell *matCellDef="let detalle"> {{detalle.noentregas}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="entregas">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Entregas </th>
+                <td mat-cell *matCellDef="let detalle"> $ {{detalle.entregas}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="bonos">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Bonos </th>
+                <td mat-cell *matCellDef="let detalle"> $ {{detalle.bonos}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="retenciones">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Retencion </th>
+                <td mat-cell *matCellDef="let detalle"> $ {{detalle.retenciones}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="totalB">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Bruto </th>
+                <td mat-cell *matCellDef="let detalle"> $ {{detalle.totalB}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="totalN">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Neto </th>
+                <td mat-cell *matCellDef="let detalle"> $ {{detalle.totalN}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="vales">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Vales </th>
+                <td mat-cell *matCellDef="let detalle"> $ {{detalle.vales}} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsDetalles; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsDetalles;"></tr>
+            </table>
+
+            <!--<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>  -->
+          </div>
+
+        </form>
+      </mat-step>
+    </mat-horizontal-stepper>
 
   </mat-card-content>
   <mat-card-actions>

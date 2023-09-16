@@ -23,6 +23,7 @@ import { EntregasComponent } from './components/entregas/entregas.component';
 import { MainUserComponent } from './components/user/main-user/main-user.component';
 import { EditarComponent } from './components/user/editar/editar.component';
 import { MensajeDialog } from './components/user/mensaje/mensaje.component';
+import { ReporteComponent } from './components/user/reporte/reporte.component';
 
 /** modulos para validacion y peticiones http */
 import { ReactiveFormsModule } from '@angular/forms';
@@ -66,7 +67,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MainUserComponent,
     AgregarComponent,
     EditarComponent,
-    MensajeDialog
+    MensajeDialog,
+    ReporteComponent
   ],
   imports: [
     BrowserModule,

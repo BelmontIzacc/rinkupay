@@ -24,19 +24,20 @@ initCtrl.iniciarDB = async (req, res) => {
     while (i < noUsuarios) {
         // generar usuario
         const numero_clave = generarNumeroEmpleado();
+        const rol = indicarRol();
         const us = new usuarioModel();
         us.nombre = nombreCompletoAleatorio();
         us.no_empleado = numero_clave;
         us.clave = generHash(numero_clave)
         us.tipo_usuario = false;
-        us.ROL = indicarRol();
+        us.ROL = rol;
         us.ISR = '650144dcde1b4e0d39080345';
         us.creacion = new Date();
         us.actualizado = new Date();
         await us.save()
 
         // generar corte y entregas
-        const idsCorte = await generarCorte(us._id);
+        const idsCorte = await generarCorte(us._id, rol);
         await us.updateOne({
             CO: idsCorte
         });
@@ -82,7 +83,22 @@ generHash = (clave) => {
 }
 
 // generar corte
-generarCorte = async (usuario) => {
+generarCorte = async (usuario, rol) => {
+    const rolRef = await rolModel.findOne({ _id: rol });
+    const sueldo_base = rolRef.sueldo_base;
+    const compensacion = rolRef.compensacion;
+    const valoresCompensacion = [1, 1, 1];
+
+    for (let comp of compensacion) {
+        const tipo = comp.tipo - 1;
+        valoresCompensacion[tipo] = comp.monto;
+    }
+
+    const tasa_base = 0.09;
+    const limite = 10000;
+    const tasa_ad = 0.03;
+
+
     let i = 0;
     const nombre_mes = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
     const idsCorte = [];
@@ -104,10 +120,46 @@ generarCorte = async (usuario) => {
         idsCorte.push("" + corte_md._id);
 
         const idsEntregas = await generarEntrega(usuario, corte_md._id);
+
+        const total_hrs = idsEntregas.hrs;
+        const total_entregas = idsEntregas.entre;
+
+        const detalles = {
+            pago_entregas: 0,
+            pago_bonos: 0,
+            retenciones: 0
+        };
+        // calculo de salario hrs x sueldo base
+        let totalBruto = total_hrs * sueldo_base;
+        // calculo adicional entregas x compensacion
+        const entrega_comp = valoresCompensacion[0] * total_entregas;
+        detalles.pago_entregas = entrega_comp;
+        totalBruto = totalBruto + entrega_comp;
+        //  bono por hora x rol
+        if (valoresCompensacion[1] !== -1) {
+            const bono_hora = (valoresCompensacion[1] * total_hrs);
+            totalBruto = totalBruto + bono_hora;
+            detalles.pago_bonos = bono_hora;
+        }
+        // retencion
+        let retencion = (totalBruto * tasa_base);
+        let pago_neto = totalBruto - retencion;
+        if (totalBruto > limite) {
+            pago_neto = pago_neto - (totalBruto * tasa_ad);
+            retencion += (totalBruto * tasa_ad);
+        }
+        detalles.retenciones = retencion;
+        // calculo de vale de despensa
+        const despensa = valoresCompensacion[2] * pago_neto
+
         await corte_md.updateOne({
             EN: idsEntregas.ids,
             entregas: idsEntregas.entre,
-            hrs_total: idsEntregas.hrs
+            hrs_total: idsEntregas.hrs,
+            pago_bruto: totalBruto,
+            pago_neto: pago_neto,
+            despensa: despensa,
+            detalles: detalles
         });
         i += 1;
     }
@@ -123,10 +175,10 @@ generarEntrega = async (usuario, corte) => {
     let total_hrs = 0
     while (i <= noEntregasPorCorte) {
         // regitrar entrega
-        const entre = Math.floor(Math.random() * 101);
+        const entre = Math.floor(Math.random() * 51);
         total_entrega += entre;
         const hrs = Math.floor(Math.random() * 9);
-        total_hrs += hrs; 
+        total_hrs += hrs;
         const en = new enModel();
         en.US = usuario;
         en.CO = corte;

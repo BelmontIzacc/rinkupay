@@ -1,11 +1,23 @@
+/**
+ * @autor Belmont
+ * @date 14/09/2023
+ */
+
+/**
+  * @description componente que permite logear un administrador al sistema
+  * 
+*/
+
+// import angular componentes
 import { Component, OnInit } from '@angular/core';
 
+// import de otros modulos
 import { NgForm } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-
 import { Router } from '@angular/router';
+
+// import de servicios
 import { UserService } from './../../services/user.service';
-import { User } from 'src/app/models/user.Model';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +27,7 @@ import { User } from 'src/app/models/user.Model';
 })
 export class LoginComponent implements OnInit {
 
+  // configuracion de los mensajes emergentes
   private config: MatSnackBarConfig;
   private duracion = 4;
 
@@ -39,7 +52,11 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  buscarUsuario(form: NgForm) {
+/**
+ * @description Busca un usuario para identificar si es del tipo administrador y logearlo dentro del sistema
+ * @param form contiene los datos requeridos para logear un usuario dentro del sistema, user : numero de empleado, password: clave de ingreso
+ */
+  public buscarUsuario(form: NgForm) {
     if (!form.value.user || !form.value.password) {
       form.reset();
       this.openSnackBar('Ingresa todos los datos');
@@ -54,7 +71,7 @@ export class LoginComponent implements OnInit {
           }
           this.usuarioServicio.setUser(user);
           form.reset();
-          this.router.navigate(['RINKUPAY/User']);
+          this.router.navigate(['RinkyPay']);
           this.openSnackBar('Bienvenido');
         } else {
           this.openSnackBar("Usuario o clave incorrecta");
@@ -63,6 +80,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /**
+   * @description Muestra mensajes emergentes
+   * @param message Mensaje a mostrar
+   */
   private openSnackBar(message) {
     this._snackBar.open(message, 'close', this.config);
   }

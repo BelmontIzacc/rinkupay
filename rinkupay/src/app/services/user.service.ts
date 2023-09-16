@@ -23,6 +23,9 @@ import { ROL } from '../models/rol.Model';
 
 export class UserService {
 
+  // Al buscar detalles de un usuario, se mostrara el usuario que se encuentre guardado
+  public userSeleccionado;
+  
   /** Declaración de url de direccion de peticiones de usuario al servidor  */
   readonly URL_API = 'http://localhost:3000/rinkupayapi/usuario';
 

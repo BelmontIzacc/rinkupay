@@ -20,6 +20,12 @@ export class CO {
   pago_bruto: number;
   pago_neto: number;
   hrs_total: number;
+  despensa: number;
+  detalles: {
+    pago_entregas: number;
+    pago_bonos: number;
+    retenciones: number;
+  };
   corte: Date;
   EN: Array<string>;
   creacion: Date;

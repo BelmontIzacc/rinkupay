@@ -11,6 +11,7 @@ const isrModel = require("../models/isr");
 const enModel = require("../models/entrega");
 const coModel = require("../models/corte");
 const usuarioModel = require("../models/usuario");
+const rolModel = require("../models/rol");
 
 /**
  * @name registrar_isr
@@ -84,7 +85,6 @@ nominaCtrl.obtenerUserCo = async (req, res) => {
     res.json({ estatus: true, cos: unicCo })
 }
 
-
 /**
  * @name registrar_en
  * @author IIB
@@ -112,6 +112,26 @@ nominaCtrl.registrar_en = async (req, res) => {
         return;
     }
 
+    const usuario = await usuarioModel.findOne({ _id: us });
+    if (!usuario) {
+        res.send({
+            estatus: false,
+            mensaje: "No existe el usuario"
+        });
+        return;
+    }
+    const rolId = usuario.ROL;
+
+    const rolRef = await rolModel.findOne({ _id: rolId });
+    if (!rolRef) {
+        res.send({
+            estatus: false,
+            mensaje: "El rol del usuario no existe"
+        });
+        return;
+    }
+    const limite_hrs = rolRef.dias_semana * rolRef.jornada;
+
     const actualizarCorte = [];
 
     // regitrar entrega
@@ -137,7 +157,9 @@ nominaCtrl.registrar_en = async (req, res) => {
     const diaCorteIsr = isrReg.dia_corte; // dia de corte indicado por el ISR
 
     const fechaEntrega = new Date(fecha); // dia del registro de la entrega
-    if (fechaEntrega.getTime() >= fechaCreacionCorte.getTime() && fechaEntrega.getTime() <= fechaFinCorte.getTime()) {
+    const total_hrs_registradas = corte.hrs_total;
+
+    if (fechaEntrega.getTime() >= fechaCreacionCorte.getTime() && fechaEntrega.getTime() <= fechaFinCorte.getTime() && limite_hrs > total_hrs_registradas) {
         const idEn = en._id;
         const enArray = corte.EN;
         enArray.push(idEn);
@@ -147,6 +169,7 @@ nominaCtrl.registrar_en = async (req, res) => {
             CO: "" + co
         });
         actualizarCorte.push(co);
+        await calcularCorte(actualizarCorte, limite_hrs, rolRef, isrReg);
     } else {
         if (fechaEntrega.getTime() > fechaFinCorte.getTime()) {
             const nombre_mes = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"]
@@ -158,10 +181,12 @@ nominaCtrl.registrar_en = async (req, res) => {
             const corte_md = new coModel();
             corte_md.US = us;
             corte_md.periodo = nombre_mes[mes] + " " + year;
-            corte_md.entregas = null;
-            corte_md.pago_bruto = null;
-            corte_md.pago_neto = null;
-            corte_md.hrs_total = null;
+            corte_md.entregas = 0;
+            corte_md.pago_bruto = 0;
+            corte_md.pago_neto = 0;
+            corte_md.hrs_total = 0;
+            corte_md.despensa = 0;
+            corte_md.detalles = {};
             corte_md.EN = [idEn];
             corte_md.corte = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + 1, diaCorteIsr);
             corte_md.creacion = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), diaCorteIsr + 1);
@@ -180,6 +205,7 @@ nominaCtrl.registrar_en = async (req, res) => {
             actualizarCorte.push(corte_md._id)
             actualizarCorte.push(co);
 
+            await calcularCorte(actualizarCorte, limite_hrs, rolRef, isrReg);
         } else {
             const idEn = en._id;
             await enModel.deleteOne({ _id: idEn });
@@ -191,7 +217,6 @@ nominaCtrl.registrar_en = async (req, res) => {
         }
     }
 
-    await calcularCorte(actualizarCorte);
     res.json({
         estatus: true,
         en: en._id
@@ -205,7 +230,22 @@ nominaCtrl.registrar_en = async (req, res) => {
  * @description Calcula el total de horas trabajadas y entregas realizadas.
  * @param idsCorte Array de identificadores de corte, a los cuales se calculara sus horas y entregas totales
  */
-calcularCorte = async (idsCorte) => {
+calcularCorte = async (idsCorte, limite_hrs, rolRef, isrReg) => {
+    // sueldos
+    const sueldo_base = rolRef.sueldo_base;
+    const compensacion = rolRef.compensacion;
+    const valoresCompensacion = [-1, -1, -1];
+
+    for (let comp of compensacion) {
+        const tipo = comp.tipo - 1;
+        valoresCompensacion[tipo] = comp.monto;
+    }
+
+    // impuestos
+    const tasa_base = isrReg.tasa_base;
+    const limite = isrReg.limite;
+    const tasa_ad = isrReg.tasa_ad;
+
     for (let idCo of idsCorte) {
         const cortes = await coModel.findOne({ '_id': idCo });
         if (cortes) {
@@ -224,9 +264,45 @@ calcularCorte = async (idsCorte) => {
                     total_hrs += refRes.horas;
                     total_entregas += refRes.entregas;
                 }
+
+                if (total_hrs >= limite_hrs) {
+                    total_hrs = limite_hrs;
+                }
+
+                const detalles = {
+                    pago_entregas: 0,
+                    pago_bonos: 0,
+                    retenciones: 0
+                };
+                // calculo de salario hrs x sueldo base
+                let totalBruto = total_hrs * sueldo_base;
+                // calculo adicional entregas x compensacion
+                const entrega_comp = valoresCompensacion[0] * total_entregas;
+                detalles.pago_entregas = entrega_comp;
+                totalBruto = totalBruto + entrega_comp;
+                //  bono por hora x rol
+                if (valoresCompensacion[1] !== -1) {
+                    const bono_hora = (valoresCompensacion[1] * total_hrs);
+                    totalBruto = totalBruto + bono_hora;
+                    detalles.pago_bonos = bono_hora;
+                }
+                // retencion
+                let retencion = (totalBruto * tasa_base);
+                let pago_neto = totalBruto - retencion;
+                if (totalBruto > limite) {
+                    pago_neto = pago_neto - (totalBruto * tasa_ad);
+                    retencion += (totalBruto * tasa_ad);
+                }
+                detalles.retenciones = retencion;
+                // calculo de vale de despensa
+                const despensa = valoresCompensacion[2] * pago_neto
                 await cortes.updateOne({
                     entregas: total_entregas,
-                    hrs_total: total_hrs
+                    hrs_total: total_hrs,
+                    pago_bruto: totalBruto,
+                    pago_neto: pago_neto,
+                    despensa: despensa,
+                    detalles: detalles
                 });
             }
         }

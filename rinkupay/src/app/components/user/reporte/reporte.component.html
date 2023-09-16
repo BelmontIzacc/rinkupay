@@ -1,0 +1,31 @@
+<mat-card class="example-card" style="margin-top: 50px;">
+    <mat-card-header style="place-content: space-evenly;">
+        <div mat-card-avatar class="example-header-image"></div>
+        <div style="text-align: center;">
+            <mat-card-title>Información del sistema</mat-card-title>
+            <mat-card-subtitle>RinkuPay</mat-card-subtitle>
+        </div>
+        <div>
+            <a mat-icon-button class="example-icon" (click)="onLogout()">
+                <mat-icon aria-hidden="false">exit_to_app</mat-icon>
+            </a>
+        </div>
+    </mat-card-header>
+    <mat-list>
+        <mat-divider></mat-divider>
+    </mat-list>
+    <mat-card-content>
+        <br>
+
+        <mat-grid-list cols="2" rowHeight="1:1">
+            <mat-grid-tile>1</mat-grid-tile>
+            <mat-grid-tile>2</mat-grid-tile>
+        </mat-grid-list>
+
+    </mat-card-content>
+    <mat-card-actions>
+        <mat-list>
+            <mat-divider></mat-divider>
+        </mat-list>
+    </mat-card-actions>
+</mat-card>
