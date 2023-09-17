@@ -34,6 +34,10 @@ import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
+// import de moles
+import { ROL } from '../../../models/rol.Model';
+import { ISR } from '../../../models/isr.Model';
+
 @Component({
   selector: 'app-main-user',
   templateUrl: './main-user.component.html',
@@ -75,6 +79,11 @@ export class MainUserComponent implements OnInit {
   public color: ThemePalette = 'accent';
   public mode: ProgressSpinnerMode = 'indeterminate';
 
+  private rols: Array<ROL> = [];
+
+  // guardar el id del isr, para ser indicar en el usuario a agregar
+  private isr: ISR;
+
   /* contructor para inicializar servicios */
   constructor(
 
@@ -88,6 +97,7 @@ export class MainUserComponent implements OnInit {
   ) {
     this.config = new MatSnackBarConfig();
     this.config.duration = 1000 * this.duracion;
+    this.obtenerRegIsr();
     this.cargarDatosEmpleados();
   }
 
@@ -116,6 +126,7 @@ export class MainUserComponent implements OnInit {
             this.userService.obtenerEmpleados().subscribe(respuesta => {
               if (respuesta.estatus) {
                 const rols = resRoles.rols;
+                this.rols = rols;
                 const cos = resCo.cos;
                 let empleados: Array<Empleado> = [];
                 const detalles: Array<Detalle> = [];
@@ -261,8 +272,8 @@ export class MainUserComponent implements OnInit {
    * @param seleccionado Objeto de tipo Empleado el cual es el seleccionado dentro de la tabla para mostrar sus detalles
    */
   public mostrarDetalles(seleccionado: Empleado) {
-    console.log(seleccionado);
-    this.userService.userSeleccionado = seleccionado;
+    this.userService.userSeleccionado = { ...seleccionado, isr: this.isr };
+    this.userService.rolUsers = this.rols;
     this.router.navigate(['RinkyPay/corte']);
   }
 
@@ -273,6 +284,7 @@ export class MainUserComponent implements OnInit {
     const dialogRef = this.dialog.open(AgregarComponent, {
       width: 'auto',
       height: 'auto',
+      data: { isr: this.isr._id }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -328,6 +340,17 @@ export class MainUserComponent implements OnInit {
    */
   private mostarMensaje(message) {
     this._snackBar.open(message, 'close', this.config);
+  }
+
+  /**
+   * @description Recupera el registro mas actual de ISR para recuperar su id e indicarlo en el usuario a agregar
+   */
+  private obtenerRegIsr() {
+    this.nominaService.obtenerIsr().subscribe(respuesta => {
+      if (respuesta.estatus) {
+        this.isr = respuesta.isr;
+      }
+    });
   }
 
 }

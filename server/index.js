@@ -24,6 +24,7 @@ const rinku = "/rinkupayapi"
 // Rutas
 app.use(rinku + '/usuario', require('./routers/usuario.router'));
 app.use(rinku + '/nomina', require('./routers/nomina.router'));
+app.use(rinku + '/informe', require('./routers/informe.router'));
 
 // Inicia el servidor
 app.listen(app.get('port'), () => {

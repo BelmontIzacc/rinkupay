@@ -24,6 +24,7 @@ import { MainUserComponent } from './components/user/main-user/main-user.compone
 import { EditarComponent } from './components/user/editar/editar.component';
 import { MensajeDialog } from './components/user/mensaje/mensaje.component';
 import { ReporteComponent } from './components/user/reporte/reporte.component';
+import { EditarEntregaComponent } from './components/user/editarEntrega/editarEntrega.component';
 
 /** modulos para validacion y peticiones http */
 import { ReactiveFormsModule } from '@angular/forms';
@@ -68,7 +69,8 @@ import { MatRadioModule } from '@angular/material/radio';
     AgregarComponent,
     EditarComponent,
     MensajeDialog,
-    ReporteComponent
+    ReporteComponent,
+    EditarEntregaComponent
   ],
   imports: [
     BrowserModule,
@@ -94,7 +96,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatExpansionModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatRadioModule,
+    MatRadioModule
   ],
   providers: [Title, MatDatepickerModule],
   bootstrap: [AppComponent],

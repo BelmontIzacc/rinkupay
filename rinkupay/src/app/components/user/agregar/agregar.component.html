@@ -35,13 +35,17 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid">Registrar</button>
+          <button mat-raised-button color="basic" (click)="onNoClick()">Cancelar</button>
+          <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid">Registrar</button>
       </mat-card-actions>
 
     </form>
   </mat-card>
 
 </div>
+<!--
 <div class="example-button-row">
   <button mat-raised-button color="primary" (click)="onNoClick()">Minimizar</button>
+  <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid">Registrar</button>
 </div>
+-->

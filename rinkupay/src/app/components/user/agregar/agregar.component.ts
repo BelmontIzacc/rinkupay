@@ -55,14 +55,14 @@ export class AgregarComponent implements OnInit {
     private nominaService: NominaService,
     public dialogRef: MatDialogRef<AgregarComponent>,
     public dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: { isr: string },
 
   ) {
-
+    this.isr = data.isr;
     // configuracion de los mensajes de snak
     this.config = new MatSnackBarConfig();
     this.config.duration = 1000 * this.duracion;
     this.obtenerRols();
-    this.obtenerRegIsr();
   }
 
   ngOnInit(): void {
@@ -110,7 +110,7 @@ export class AgregarComponent implements OnInit {
       } else {
         this.openSnackBar(respuesta.us);
       }
-      
+
     })
   }
 
@@ -149,17 +149,6 @@ export class AgregarComponent implements OnInit {
             id: r._id
           });
         }
-      }
-    });
-  }
-
-  /**
-   * @description Recupera el registro mas actual de ISR para recuperar su id e indicarlo en el usuario a agregar
-   */
-  private obtenerRegIsr() {
-    this.nominaService.obtenerIsr().subscribe(respuesta => {
-      if (respuesta.estatus) {
-        this.isr = respuesta.isr._id;
       }
     });
   }

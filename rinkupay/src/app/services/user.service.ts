@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 import { isNullOrUndefined } from 'util';
 import { User } from '../models/user.Model';
 import { ROL } from '../models/rol.Model';
+import { ISR } from '../models/isr.Model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,8 @@ import { ROL } from '../models/rol.Model';
 export class UserService {
 
   // Al buscar detalles de un usuario, se mostrara el usuario que se encuentre guardado
-  public userSeleccionado;
+  public userSeleccionado: {id: string, no_empleado: string, nombre: string, rol: string, isr: ISR};
+  public rolUsers: Array<ROL> = [];
   
   /** Declaración de url de direccion de peticiones de usuario al servidor  */
   readonly URL_API = 'http://localhost:3000/rinkupayapi/usuario';
