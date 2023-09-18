@@ -1,4 +1,4 @@
-<mat-card class="example-card" style="margin-top: 50px;">
+<mat-card class="example-card">
     <mat-card-header style="place-content: space-evenly;">
         <div mat-card-avatar class="example-header-image"></div>
         <div style="text-align: center;">
@@ -6,6 +6,9 @@
             <mat-card-subtitle>RinkuPay</mat-card-subtitle>
         </div>
         <div>
+            <a mat-icon-button class="example-icon" (click)="regresar()">
+                <mat-icon>chevron_left</mat-icon>
+            </a>
             <a mat-icon-button class="example-icon" (click)="onLogout()">
                 <mat-icon aria-hidden="false">exit_to_app</mat-icon>
             </a>
@@ -18,8 +21,143 @@
         <br>
 
         <mat-grid-list cols="2" rowHeight="1:1">
-            <mat-grid-tile>1</mat-grid-tile>
-            <mat-grid-tile>2</mat-grid-tile>
+            <mat-grid-tile>
+
+                <!-- Panel izquierdo -->
+
+                <mat-card class="example-card2">
+
+                    <mat-card-header>
+                        <mat-card-title>{{userSelected.nombre}}</mat-card-title>
+                        <mat-card-subtitle>Numero de empleado:
+                            <strong>{{userSelected.no_empleado}}</strong></mat-card-subtitle>
+                        <mat-card-subtitle>ROL: <strong>{{userSelected.rol}}</strong></mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-card-content>
+
+                        <div class="mat-elevation-z8 tabla-container">
+
+                            <div *ngIf="isLoading" class="overlay">
+                                <mat-progress-spinner [color]=color [mode]=mode></mat-progress-spinner>
+                            </div> 
+
+                            <mat-selection-list #shoes [multiple]="false" *ngIf="!isLoading" (selectionChange)="onSelectionChange($event)">
+                                <mat-list-option *ngFor="let periodo of periodos" [value]="periodo">
+                                    {{periodo.periodo}}
+                                </mat-list-option>
+                            </mat-selection-list>
+                        </div>
+
+                    </mat-card-content>
+                </mat-card>
+
+            </mat-grid-tile>
+            <mat-grid-tile>
+
+                <!-- Panel Derecha -->
+                <mat-card class="example-card2" style="place-content: space-evenly;">
+
+                    <mat-card-header>
+
+                        <div class="column-container">
+                            <div class="column">
+                                <mat-card-title>Periodo: {{reporte.periodo}}</mat-card-title>
+                                <mat-card-subtitle>Inicio del periodo:
+                                    <strong>{{reporte.inicio}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Fin del periodo:
+                                    <strong>{{reporte.corte}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Total de horas:
+                                    <strong>{{reporte.hrs_total}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Numero de entregas:
+                                    <strong>{{reporte.entregas}}</strong></mat-card-subtitle>
+                            </div>
+
+                            <div class="column">
+                                <br>
+                                <br>
+                                <mat-card-subtitle>Salario bruto:
+                                    <strong>$ {{reporte.pago_bruto}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Salario neto:
+                                    <strong>$ {{reporte.pago_neto}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Vale de despensa:
+                                    <strong>$ {{reporte.despensa}}</strong></mat-card-subtitle>
+                            </div>
+
+                            <div class="column">
+                                <mat-card-subtitle>Pago por horas:
+                                    <strong>$ {{reporte.detalles.pago_horas}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Pago por bonos:
+                                    <strong>$ {{reporte.detalles.pago_bonos}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Pago por entregas:
+                                    <strong>$ {{reporte.detalles.pago_entregas}}</strong></mat-card-subtitle>
+                                <mat-card-subtitle>Retencion:
+                                    <strong>$ {{reporte.detalles.retenciones}}</strong></mat-card-subtitle>
+                            </div>
+                        </div>
+                    </mat-card-header>
+
+                    <mat-card-content>
+
+                        <div class="mat-elevation-z8 tabla-container">
+
+                            <table mat-table [dataSource]="dataDetalleSource" matSort *ngIf="!isLoading">
+
+                                <ng-container matColumnDef="elemento">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> No </th>
+                                    <td mat-cell *matCellDef="let detalle"> {{detalle.elemento}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="entregas">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Entregas </th>
+                                    <td mat-cell *matCellDef="let detalle"> {{detalle.entregas}} </td>
+                                </ng-container>
+
+
+                                <ng-container matColumnDef="horas">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> No Horas </th>
+                                    <td mat-cell *matCellDef="let detalle"> {{detalle.horas}} </td>
+                                </ng-container>
+
+
+                                <ng-container matColumnDef="fecha">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+                                    <td mat-cell *matCellDef="let detalle"> {{detalle.fecha}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="acciones">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <div class="example-button-row">
+                                            <div class="example-flex-container">
+                                                <div class="example-button-container">
+                                                    <button mat-mini-fab color="primary"
+                                                        (click)="editarReporte(element)"
+                                                        aria-label="Example icon button with a delete icon">
+                                                        <mat-icon>edit</mat-icon>
+                                                    </button>
+                                                </div>
+                                                <div class="example-button-container">
+                                                    <button mat-mini-fab color="warn" (click)="eliminarReporte(element)"
+                                                        aria-label="Example icon button with a delete icon">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+
+                        </div>
+
+                    </mat-card-content>
+                </mat-card>
+
+            </mat-grid-tile>
         </mat-grid-list>
 
     </mat-card-content>

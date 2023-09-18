@@ -1,6 +1,11 @@
 .example-card {
-    max-width: 430px;
-    margin: 100px auto;
+    max-width: 1250px;
+    margin: 20px auto;
+}
+
+.example-card2 {
+    width: 100%;
+    height: inherit;
 }
 
 .example-header-image {
@@ -10,4 +15,60 @@
 
 table {
     width: 100%;
+}
+
+.example-tree-invisible {
+    display: none;
+}
+
+.example-tree ul,
+.example-tree li {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    /* Fondo semitransparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabla-container {
+    height: 300px;
+    overflow: auto;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.column {
+    flex: 1;
+    padding: 10px;
+    min-width: 30%;
+    /* Establece el ancho mínimo de cada columna */
+}
+
+.example-button-row button {
+    display: table-cell;
+    margin-right: 8px;
+}
+
+.example-flex-container {
+    display: flex;
+}
+
+.example-button-container {
+    display: flex;
+    justify-content: center;
 }

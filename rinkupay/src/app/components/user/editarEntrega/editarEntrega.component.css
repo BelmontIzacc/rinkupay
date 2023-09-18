@@ -30,7 +30,9 @@
     margin-right: 8px;
 }
 
-.example-button-rowbutton {
+.example-button-row button {
+    margin-right: 4px;
+    width: 100%;
     background-color: #682444;
 }
 

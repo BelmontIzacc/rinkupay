@@ -8,17 +8,20 @@
 const express = require('express');
 const router = express.Router();
 
+// import de middleware
+const autMiddleware = require('../aut.middleware');
+
 // import de controlador
 const nominaCtrl = require('../controllers/nomina.controller');
 
 // rutas
 
 // corte
-router.get('/corte', nominaCtrl.obtenerUserCo)
+router.get('/corte', autMiddleware.verifyToken, nominaCtrl.obtenerUserCo)
 
 //isr
-router.post('/reg_isr', nominaCtrl.registrar_isr);
-router.get('/isr', nominaCtrl.obtenerIsr);
+router.post('/reg_isr', autMiddleware.verifyToken, nominaCtrl.registrar_isr);
+router.get('/isr', autMiddleware.verifyToken, nominaCtrl.obtenerIsr);
 
 //entregas
 router.post('/reg_entrega', nominaCtrl.registrar_en)

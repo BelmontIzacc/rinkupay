@@ -16,7 +16,7 @@
         </mat-form-field>
         <mat-form-field class="example-full-width">
           <mat-label>Contraseña</mat-label>
-          <input matInput placeholder="Ex. **********" name="password" #nombre="ngModel" [(ngModel)] = "usuarioSeleccionado.password" class="form-control" required>
+          <input matInput placeholder="Ex. **********" name="password" type="password" #nombre="ngModel" [(ngModel)] = "usuarioSeleccionado.password" class="form-control" required>
         </mat-form-field>
         <div class="example-button-row" id="accionesBoton">
             <button mat-raised-button type="submit" color="primary" [disabled]="UserForm.invalid" >Acceder</button>

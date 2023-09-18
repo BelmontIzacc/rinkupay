@@ -59,13 +59,11 @@ export class EditarComponent implements OnInit {
     const no_empleado = form.value.noEmpleado;
     this.userService.actualizarUsuario(nombre, no_empleado, rol, this.empleado.id).subscribe(respuesta => {
       if (respuesta.estatus) {
-        this.openSnackBar("Usuario actualizado");
         this.yesNoClick();
       } else {
         this.openSnackBar(respuesta.us);
       }
     })
-
   }
 
   /** funcion que al iniciar la pagina carga la información o inicia funciones espesificadas */

@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>Editar</h1>
+<div mat-dialog-content>
+
+    <mat-card class="example-card">
+        <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+            <mat-card-title>Cambiar los datos del registro</mat-card-title>
+            <mat-card-subtitle>{{entrega.fecha}}</mat-card-subtitle>
+        </mat-card-header>
+        <br>
+        <form class="example-form center" id="form" #entregaForm="ngForm" (ngSubmit)="editarEntregas(entregaForm)">
+            <mat-card-content>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Total de horas</mat-label>
+                    <input matInput placeholder="Ex. 8" name="horas" #nombre="ngModel" min="0" max="8"
+                        [(ngModel)]="entrega.horas" class="form-control" autofocus required>
+                </mat-form-field>
+                <br>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Total de entregas</mat-label>
+                    <input matInput placeholder="Ex. 4" name="entregas" #nombre="ngModel" min="0"
+                        [(ngModel)]="entrega.entregas" class="form-control" required>
+                </mat-form-field>
+            </mat-card-content>
+
+            <mat-card-actions>
+                <button mat-raised-button color="basic" (click)="onNoClick()">Cancelar</button>
+                <button mat-raised-button type="submit" color="primary"
+                    [disabled]="entregaForm.invalid">Actualizar</button>
+            </mat-card-actions>
+        </form>
+    </mat-card>
+</div>
