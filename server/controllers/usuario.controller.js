@@ -73,10 +73,17 @@ usuarioCtrl.registro = async (req, res) => {
         const corte_md = new coModel();
         corte_md.US = id;
         corte_md.periodo = nombre_mes[mes] + " " + year;
-        corte_md.entregas = null;
-        corte_md.pago_bruto = null;
-        corte_md.pago_neto = null;
-        corte_md.hrs_total = null;
+        corte_md.entregas = 0;
+        corte_md.pago_bruto = 0;
+        corte_md.despensa = 0;
+        corte_md.pago_neto = 0;
+        corte_md.hrs_total = 0;
+        corte_md.detalles = {
+            pago_entregas: 0,
+            pago_bonos: 0,
+            retenciones: 0
+        };
+        corte_md.entregas = 0;
         corte_md.EN = [];
 
         const isr = await isrModel.find().sort({ creacion: -1 });

@@ -12,22 +12,25 @@ const router = express.Router();
 const usuarioCtrl = require('../controllers/usuario.controller');
 const initCtrl = require('../controllers/init.controller');
 
+// import de middleware
+const autMiddleware = require('../aut.middleware');
+
 // rutas
 
 // usuario
-router.post('/', usuarioCtrl.registro);
+router.post('/', autMiddleware.verifyToken, usuarioCtrl.registro);
 router.post('/login', usuarioCtrl.login);
 router.post('/buscar', usuarioCtrl.buscarUsuario);
-router.get('/empleados', usuarioCtrl.obtenerEmpleados);
-router.delete('/eliminar/:empleado', usuarioCtrl.eliminarUsuario);
-router.put('/actualizar', usuarioCtrl.actualizarUser)
+router.get('/empleados', autMiddleware.verifyToken, usuarioCtrl.obtenerEmpleados);
+router.delete('/eliminar/:empleado', autMiddleware.verifyToken, usuarioCtrl.eliminarUsuario);
+router.put('/actualizar', autMiddleware.verifyToken, usuarioCtrl.actualizarUser);
 
 // rol
-router.post('/agregar_rol', usuarioCtrl.agregrRol)
-router.get('/rols', usuarioCtrl.obtenerROL)
+router.post('/agregar_rol', autMiddleware.verifyToken, usuarioCtrl.agregrRol);
+router.get('/rols', usuarioCtrl.obtenerROL);
 
 // iniciar db
-router.get('/init', initCtrl.iniciarDB)
+router.get('/init', autMiddleware.verifyToken, initCtrl.iniciarDB);
 
 // export del modulo router
 module.exports = router;

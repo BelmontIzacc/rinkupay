@@ -5,6 +5,7 @@
         <mat-card-header>
             <div mat-card-avatar class="example-header-image"></div>
             <mat-card-title>Cambiar los datos del registro</mat-card-title>
+            <mat-card-subtitle>{{entrega.fecha}}</mat-card-subtitle>
         </mat-card-header>
         <br>
         <form class="example-form center" id="form" #entregaForm="ngForm" (ngSubmit)="editarEntregas(entregaForm)">

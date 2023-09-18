@@ -33,7 +33,8 @@ export class EditarEntregaComponent implements OnInit {
         enId: "",
         entregas: "",
         horas: "",
-        rol: ""
+        rol: "",
+        fecha: ""
     }
 
     constructor(
@@ -82,7 +83,6 @@ export class EditarEntregaComponent implements OnInit {
         }
         this.infService.editarEntrega(this.entrega.enId, this.entrega.rol, horas, entregas).subscribe(respuesta => {
             if (respuesta.estatus) {
-                this.openSnackBar("Registro actualizado");
                 this.yesNoClick();
             } else {
                 this.openSnackBar(respuesta.en);
@@ -96,4 +96,5 @@ export interface Entrega {
     entregas: string;
     horas: string;
     rol: string;
+    fecha: string;
 }

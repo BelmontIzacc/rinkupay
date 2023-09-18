@@ -79,39 +79,39 @@ export class AgregarComponent implements OnInit {
     const rol = form.value.rols;
     const userName = form.value.userName;
 
-    if (rol.tipo === '') {
-      this.openSnackBar("Indica el tipo de usuario");
+    if (rol === undefined || rol === null || rol.tipo === '') {
       return;
     }
 
-    let addUser = {
-      nombre: userName,
-      no_empleado: user,
-      clave: password,
-      tipo_usuario: false,
-      rol: "",
-      isr: "",
-    }
-    if (rol.addMore) {
-      // usuario normal
-      addUser.rol = rol.id
-      addUser.isr = this.isr
-      addUser.tipo_usuario = false;
-    } else {
-      // administrador
-      addUser.tipo_usuario = true;
-    }
-
-    // guardar usuario
-    this.userService.guardarUsuario(addUser).subscribe(respuesta => {
-      if (respuesta.estatus) {
-        this.openSnackBar("Usuario registrado");
-        form.reset()
+    if (form.status) {
+      let addUser = {
+        nombre: userName,
+        no_empleado: user,
+        clave: password,
+        tipo_usuario: false,
+        rol: "",
+        isr: "",
+      }
+      if (rol.addMore) {
+        // usuario normal
+        addUser.rol = rol.id
+        addUser.isr = this.isr
+        addUser.tipo_usuario = false;
       } else {
-        this.openSnackBar(respuesta.us);
+        // administrador
+        addUser.tipo_usuario = true;
       }
 
-    })
+      // guardar usuario
+      this.userService.guardarUsuario(addUser).subscribe(respuesta => {
+        if (respuesta.estatus) {
+          this.openSnackBar("Usuario registrado");
+          this.onNoClick();
+        } else {
+          this.openSnackBar(respuesta.us);
+        }
+      })
+    }
   }
 
   /**

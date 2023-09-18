@@ -262,6 +262,7 @@ export class MainUserComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == true) {
+        this.mostarMensaje("Usuario actualizado");
         this.cargarDatosEmpleados();
       }
     });

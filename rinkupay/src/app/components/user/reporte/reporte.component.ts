@@ -150,13 +150,13 @@ export class ReporteComponent implements OnInit {
 
         // Reporte
         const inicio = new Date(informe.CO.creacion);
-        const dia = inicio.getDate() + 1;
+        const dia = inicio.getDate();
         const mes = inicio.getMonth();
         const year = inicio.getFullYear();
         const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
         const corteDate = new Date(informe.CO.corte);
-        const dcorte = corteDate.getDate() + 1;
+        const dcorte = corteDate.getDate();
         const mcorte = corteDate.getMonth();
         const ycorte = corteDate.getFullYear();
 
@@ -183,7 +183,7 @@ export class ReporteComponent implements OnInit {
         let i = 1;
         for (let en of informe.EN) {
             const fechEntrega = new Date(en.fecha);
-            const dia = fechEntrega.getDate() + 1;
+            const dia = fechEntrega.getDate();
             const mes = fechEntrega.getMonth();
             const year = fechEntrega.getFullYear();
             entregas.push({
@@ -237,7 +237,8 @@ export class ReporteComponent implements OnInit {
             horas: horas,
             entregas: entregas,
             rol: this.rolRef._id,
-            enId: entrega.enId
+            enId: entrega.enId,
+            fecha: entrega.fecha
         }
         const dialogRef = this.dialog.open(EditarEntregaComponent, {
             width: 'auto',
@@ -248,6 +249,7 @@ export class ReporteComponent implements OnInit {
             if (result == true) {
                 this.isLoading = true;
                 this.actualizar = true;
+                this.mostarMensaje("Registro actualizado");
                 this.recuperarInforme();
             }
         })

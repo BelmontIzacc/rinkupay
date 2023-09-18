@@ -11,10 +11,13 @@ const router = express.Router();
 // import de controlador
 const informeCtrl = require('../controllers/informe.controller');
 
+// import de middleware
+const autMiddleware = require('../aut.middleware');
+
 // rutas
-router.get('/info/:us', informeCtrl.obtenerReporte);
-router.put('/info', informeCtrl.editarEntrega);
-router.post('/info', informeCtrl.eliminarEntrega);
+router.get('/info/:us', autMiddleware.verifyToken, informeCtrl.obtenerReporte);
+router.put('/info', autMiddleware.verifyToken, informeCtrl.editarEntrega);
+router.post('/info', autMiddleware.verifyToken, informeCtrl.eliminarEntrega);
 
 // export del modulo router
 module.exports = router;

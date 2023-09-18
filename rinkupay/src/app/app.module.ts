@@ -29,7 +29,11 @@ import { EditarEntregaComponent } from './components/user/editarEntrega/editarEn
 /** modulos para validacion y peticiones http */
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+/** import para enviar token al realizar una peticion */
+import { AuthInterceptor } from './guard/auth.interceptor';
+import { ErrorInterceptor } from './guard/ErrorInterceptor';
 
 /** modulos de los componentes de angular material */
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -54,6 +58,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 
 /** 
  * declarando los modulos para su uso dentro del sistema por medio de variables
@@ -98,7 +104,33 @@ import { MatRadioModule } from '@angular/material/radio';
     MatNativeDateModule,
     MatRadioModule
   ],
-  providers: [Title, MatDatepickerModule],
+  providers: [Title, MatDatepickerModule, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    },
+    {
+      provide: MAT_DATE_LOCALE,
+      useValue: 'es-ES', // Cambia 'es-ES' al locale que desees
+    }, {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: ['l', 'LL'],
+        },
+        display: {
+          dateInput: 'DD/MM/YYYY',
+          monthYearLabel: 'MMM YYYY',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+        },
+      }
+    },],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
