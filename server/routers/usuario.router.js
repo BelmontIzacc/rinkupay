@@ -14,19 +14,20 @@ const initCtrl = require('../controllers/init.controller');
 
 // import de middleware
 const autMiddleware = require('../aut.middleware');
+const user_dto = require('./dto/user.dto');
 
 // rutas
 
 // usuario
-router.post('/', autMiddleware.verifyToken, usuarioCtrl.registro);
-router.post('/login', usuarioCtrl.login);
-router.post('/buscar', usuarioCtrl.buscarUsuario);
+router.post('/', autMiddleware.verifyToken, user_dto.registroDto, usuarioCtrl.registro);
+router.post('/login', user_dto.buscarDto, usuarioCtrl.login);
+router.post('/buscar', user_dto.buscarDto, usuarioCtrl.buscarUsuario);
 router.get('/empleados', autMiddleware.verifyToken, usuarioCtrl.obtenerEmpleados);
 router.delete('/eliminar/:empleado', autMiddleware.verifyToken, usuarioCtrl.eliminarUsuario);
-router.put('/actualizar', autMiddleware.verifyToken, usuarioCtrl.actualizarUser);
+router.put('/actualizar', autMiddleware.verifyToken, user_dto.actualizarUserDto, usuarioCtrl.actualizarUser);
 
 // rol
-router.post('/agregar_rol', autMiddleware.verifyToken, usuarioCtrl.agregrRol);
+router.post('/agregar_rol', autMiddleware.verifyToken, user_dto.agregarRolDto, usuarioCtrl.agregrRol);
 router.get('/rols', usuarioCtrl.obtenerROL);
 
 // iniciar db

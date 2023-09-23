@@ -35,7 +35,7 @@ nominaCtrl.registrar_isr = async (req, res) => {
     isr.tasa_ad = adic;
     isr.creacion = new Date();
     isr.actualizado = new Date();
-    isr.dia_corte = 24;
+    isr.dia_corte = dia_corte;
     await isr.save()
 
     const id = isr._id;
