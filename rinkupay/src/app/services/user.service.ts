@@ -18,6 +18,9 @@ import { User } from '../models/user.Model';
 import { ROL } from '../models/rol.Model';
 import { ISR } from '../models/isr.Model';
 
+// environment
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,11 +28,11 @@ import { ISR } from '../models/isr.Model';
 export class UserService {
 
   // Al buscar detalles de un usuario, se mostrara el usuario que se encuentre guardado
-  public userSeleccionado: {id: string, no_empleado: string, nombre: string, rol: string, isr: ISR};
+  public userSeleccionado: { id: string, no_empleado: string, nombre: string, rol: string, isr: ISR };
   public rolUsers: Array<ROL> = [];
-  
+
   /** Declaración de url de direccion de peticiones de usuario al servidor  */
-  readonly URL_API = 'http://localhost:3000/rinkupayapi/usuario';
+  readonly URL_API = environment.apiUrl + '/usuario';
 
   /** constructor del sistema inicializando el objeto para peticiones http */
   constructor(
@@ -50,7 +53,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error" });
       });
     return res.asObservable();
   }
@@ -70,7 +73,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error", token: null});
       });
     return res.asObservable();
   }
@@ -89,7 +92,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, empleados: []});
       });
     return res.asObservable();
   }
@@ -108,7 +111,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, rols: []});
       });
     return res.asObservable();
   }
@@ -166,7 +169,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error" });
       });
     return res.asObservable();
   }
@@ -194,7 +197,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error" });
       });
     return res.asObservable();
   }

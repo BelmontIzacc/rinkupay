@@ -13,24 +13,22 @@ const usuarioModel = require("../models/usuario");
 const rolModel = require("../models/rol");
 const isrModel = require("../models/isr")
 
+// import de exceptions
+const StandarException = require('../exception/StandarException');
+const codigos = require('../exception/codigos');
+
 /**
  * @name obtenerReporte
  * @author IIB
  * @version 0.0.3
  * @description recupera los cortes de un usuario y sus respectivas entregas
  * @param us identificador de usuario.
- * @returns { estatus: true, informe: [{...}]} | 
+ * @returns informe: [{...}] | StandarException
  */
-informeCtrl.obtenerReporte = async (req, res) => {
-    const id = req.params.us;
-
+informeCtrl.obtenerReporte = async (id) => {
     const userFind = await usuarioModel.findOne({ '_id': id });
     if (!userFind) {
-        res.json({
-            estatus: false,
-            informe: "No existe el usuario indicado"
-        });
-        return;
+        return new StandarException('No existe el usuario indicado', codigos.noEncontradoUsuario);
     }
 
     const corte = userFind.CO;
@@ -52,10 +50,7 @@ informeCtrl.obtenerReporte = async (req, res) => {
             });
         }
     }
-    res.json({
-        estatus: true,
-        informe: arrayCorte
-    });
+    return arrayCorte;
 }
 
 /**
@@ -67,18 +62,13 @@ informeCtrl.obtenerReporte = async (req, res) => {
  * @param horas Numero de horas realizadas en el dia
  * @param en Identificador de entregas
  * @param rol Identificador del rol
- * @returns { estatus: true, en: "..."} | 
+ * @returns informe: "..." | StandarException
  */
-informeCtrl.editarEntrega = async (req, res) => {
-    const entregas = req.body.entregas;
-    const horas = req.body.horas;
-    const enId = req.body.en;
-    const rolId = req.body.rol;
-
+informeCtrl.editarEntrega = async (entregas, horas, enId, rolId) => {
     const promesasAresolver = [];
-    const refEnP = await enModel.findOne({ '_id': enId });
-    const rolRefP = await rolModel.findOne({ _id: rolId });
-    const isrP = await isrModel.find().sort({ creacion: -1 });
+    const refEnP = enModel.findOne({ '_id': enId });
+    const rolRefP = rolModel.findOne({ _id: rolId });
+    const isrP = isrModel.find().sort({ creacion: -1 });
     promesasAresolver.push(refEnP);
     promesasAresolver.push(rolRefP);
     promesasAresolver.push(isrP);
@@ -87,7 +77,17 @@ informeCtrl.editarEntrega = async (req, res) => {
     const refEn = resuelto[0];
     const rolRef = resuelto[1];
     const isr = resuelto[2];
-    
+
+    if (!refEn) {
+        return new StandarException('No existe la entrega indicada', codigos.datoNoEncontrado);
+    }
+
+    if (!rolRef) {
+        return new StandarException('No existe el rol indicado', codigos.datoNoEncontrado);
+    }
+    if (!isr) {
+        return new StandarException('No existe el isr indicado', codigos.datoNoEncontrado);
+    }
     const isrReg = isr[0];
 
     const limite_hrs = rolRef.dias_semana * rolRef.jornada;
@@ -97,10 +97,7 @@ informeCtrl.editarEntrega = async (req, res) => {
         horas: horas,
         entregas: entregas
     });
-    res.json({
-        estatus: true,
-        informe: enId
-    });
+    return enId;
 }
 
 /**
@@ -110,31 +107,23 @@ informeCtrl.editarEntrega = async (req, res) => {
  * @description Eliminar un registro de entrega
  * @param en Identificador de entregas
  * @param rol Identificador del rol
- * @returns { estatus: true, en: "..."} | 
+ * @returns "..." | StandarException
  */
-informeCtrl.eliminarEntrega = async (req, res) => {
-    const enId = req.body.en;
-    const rolId = req.body.rol;
-
+informeCtrl.eliminarEntrega = async (enId, rolId) => {
     const refEn = await enModel.findOne({ '_id': enId });
     if (!refEn) {
-        res.json({
-            estatus: false,
-            informe: "No existe la entrega indicada"
-        });
-        return;
+        return new StandarException('No existe la entrega indicada', codigos.datoNoEncontrado);
     }
 
     const rolRef = await rolModel.findOne({ _id: rolId });
     if (!rolRef) {
-        res.json({
-            estatus: false,
-            informe: "El rol del usuario no existe"
-        });
-        return;
+        return new StandarException('El rol del usuario no existe', codigos.datoNoEncontrado);
     }
 
     const isr = await isrModel.find().sort({ creacion: -1 });
+    if(isr.length == 0){
+        return new StandarException('No existen ISR', codigos.datosNoEncontrados);
+    }
     const isrReg = isr[0];
 
     const limite_hrs = rolRef.dias_semana * rolRef.jornada;
@@ -142,11 +131,7 @@ informeCtrl.eliminarEntrega = async (req, res) => {
 
     const refCorte = await coModel.findOne({ '_id': corte });
     if (!rolRef) {
-        res.json({
-            estatus: false,
-            informe: "El corte no existe"
-        });
-        return;
+        return new StandarException('El corte no existe', codigos.datoNoEncontrado);
     }
 
     const enArray = refCorte.EN;
@@ -162,10 +147,7 @@ informeCtrl.eliminarEntrega = async (req, res) => {
     });
 
     await recalcularCorte(corte, limite_hrs, rolRef, isrReg);
-    res.json({
-        estatus: true,
-        informe: enId
-    });
+    return enId;
 }
 
 /**

@@ -12,13 +12,46 @@ const router = express.Router();
 const informeCtrl = require('../controllers/informe.controller');
 
 // import de middleware
-const autMiddleware = require('../aut.middleware');
+const autMiddleware = require('../middleware/aut.middleware');
 const info_dto = require('./dto/informe.dto');
 
+// import de exceptions
+const StandarException = require('../exception/StandarException');
+
 // rutas
-router.get('/info/:us', autMiddleware.verifyToken, informeCtrl.obtenerReporte);
-router.put('/info', autMiddleware.verifyToken, info_dto.editarEntrega, informeCtrl.editarEntrega);
-router.post('/info', autMiddleware.verifyToken, info_dto.eliminarEntrega, informeCtrl.eliminarEntrega);
+router.get('/info/:us', autMiddleware.verifyToken, async (req, res, next) => {
+    const id = req.params.us;
+    const resultado = await informeCtrl.obtenerReporte(id);
+    if (resultado instanceof StandarException) {
+        next(resultado);
+        return;
+    }
+    res.json({ estatus: true, informe: resultado });
+});
+router.put('/info', autMiddleware.verifyToken, info_dto.editarEntrega, async (req, res, next) => {
+    const entregas = req.body.entregas;
+    const horas = req.body.horas;
+    const enId = req.body.en;
+    const rolId = req.body.rol;
+
+    const resultado = await informeCtrl.editarEntrega(entregas, horas, enId, rolId);
+    if (resultado instanceof StandarException) {
+        next(resultado);
+        return;
+    }
+    res.json({ estatus: true, informe: resultado });
+});
+router.post('/info', autMiddleware.verifyToken, info_dto.eliminarEntrega, async(req, res, next) => {
+    const enId = req.body.en;
+    const rolId = req.body.rol;
+
+    const resutado = informeCtrl.eliminarEntrega(enId, rolId);
+    if (resultado instanceof StandarException) {
+        next(resultado);
+        return;
+    }
+    res.json({ estatus: true, informe: resultado });
+});
 
 // export del modulo router
 module.exports = router;

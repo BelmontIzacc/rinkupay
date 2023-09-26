@@ -18,13 +18,16 @@ import { HttpClient } from '@angular/common/http';
 import { CO } from '../models/co.Model';
 import { EN } from '../models/en.model';
 
+// environment
+import { environment } from '../../environments/environment';
+
 @Injectable({
     providedIn: 'root'
 })
 
 export class InformeService {
     /** Declaración de url de direccion de peticiones de nomina al servidor  */
-    readonly URL_API = 'http://localhost:3000/rinkupayapi/informe';
+    readonly URL_API = environment.apiUrl + '/informe';
 
     /** constructor del sistema inicializando el objeto para peticiones http */
     constructor(
@@ -45,7 +48,7 @@ export class InformeService {
             }
         },
             err => {
-                res.error(err);
+                res.next({ estatus: false, informe: null });
             });
         return res.asObservable();
     }
@@ -73,7 +76,7 @@ export class InformeService {
             }
         },
             err => {
-                res.error(err);
+                res.next({ estatus: false, en: "A ocurrido un error" });
             });
         return res.asObservable();
     }
@@ -98,7 +101,7 @@ export class InformeService {
             }
         },
             err => {
-                res.error(err);
+                res.next({ estatus: false, en: "A ocurrido un error" });
             });
         return res.asObservable();
     }

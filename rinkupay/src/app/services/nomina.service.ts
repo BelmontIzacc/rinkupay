@@ -16,6 +16,9 @@ import { HttpClient } from '@angular/common/http';
 import { ISR } from '../models/isr.Model';
 import { CO } from '../models/co.Model';
 
+// environment
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +26,7 @@ import { CO } from '../models/co.Model';
 export class NominaService {
 
   /** Declaración de url de direccion de peticiones de nomina al servidor  */
-  readonly URL_API = 'http://localhost:3000/rinkupayapi/nomina';
+  readonly URL_API = environment.apiUrl + '/nomina';
 
   /** constructor del sistema inicializando el objeto para peticiones http */
   constructor(
@@ -44,7 +47,7 @@ export class NominaService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, en: "A ocurrido un error"});
       });
     return res.asObservable();
   }
@@ -63,7 +66,7 @@ export class NominaService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, isr: null });
       });
     return res.asObservable();
   }
@@ -82,7 +85,7 @@ export class NominaService {
         }
       },
         err => {
-          res.error(err);
+          res.next({ estatus: false, cos: null });
         });
       return res.asObservable();
     }

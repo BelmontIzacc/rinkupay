@@ -222,6 +222,8 @@ export class ReporteComponent implements OnInit {
                 }{
                     this.isLoading = false;
                 }
+            } else {
+                this.mostarMensaje("No se recupero el informe del usuario");
             }
         });
     }
@@ -274,6 +276,8 @@ export class ReporteComponent implements OnInit {
                         this.actualizar = true;
                         this.recuperarInforme();
                         this.mostarMensaje("Se elimino el registro: " + entrega.fecha)
+                    } else {
+                        this.mostarMensaje("No se elimino la entrega, a ocurrido un error");
                     }
                 })
             }
