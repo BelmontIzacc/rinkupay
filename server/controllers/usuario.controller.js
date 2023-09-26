@@ -6,14 +6,20 @@
 
 const usuarioCtrl = {};
 
+// modulos
 const bcrypt = require('bcrypt-nodejs');
+const jwt = require('jsonwebtoken');
+
+// import de models
 const usuarioModel = require("../models/usuario");
 const rolModel = require("../models/rol");
 const coModel = require("../models/corte");
 const enModel = require("../models/entrega");
 const isrModel = require("../models/isr")
 
-const jwt = require('jsonwebtoken');
+// import de exceptions
+const StandarException = require('../exception/StandarException');
+const codigos = require('../exception/codigos');
 
 const tk = "zcz0au22eiz3s23l4oie2V222";
 
@@ -28,28 +34,12 @@ const tk = "zcz0au22eiz3s23l4oie2V222";
  * @param tipo_usuario Tipo de usuario, false para empleado, true para administrador.
  * @param rol Identificador de la coleccion ROL para determinar a que tipo de rol pertenece el usuario.
  * @param isr Identificador de la coleccion ISR sobre la retencion sobre el salario que se realizara al empleado.
- * @returns { estatus: true, us: '...'} | 
+ * @returns '...' | StandarException
  */
-usuarioCtrl.registro = async (req, res) => {
-    const nombre = req.body.nombre;
-    const no_empleado = req.body.no_empleado;
-    const clave = req.body.clave;
-    const tipo_usuario = req.body.tipo_usuario;
-    let rol = req.body.rol;
-    let isr = req.body.isr;
-
-    if (tipo_usuario == true) {
-        rol = null;
-        isr = null;
-    }
-
+usuarioCtrl.registro = async (nombre, no_empleado, clave, tipo_usuario, rol, isr) => {
     const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
     if (userFind) {
-        res.json({
-            estatus: false,
-            us: "Ya existe el numero de empleado registrado"
-        });
-        return;
+        return new StandarException('Ya existe el numero de empleado registrado', codigos.validacionIncorrecta);
     }
 
     const us = new usuarioModel();
@@ -107,10 +97,7 @@ usuarioCtrl.registro = async (req, res) => {
         })
     }
 
-    res.json({
-        estatus: true,
-        us: id
-    });
+    return id;
 }
 
 /**
@@ -121,30 +108,17 @@ usuarioCtrl.registro = async (req, res) => {
  * @param nombre Nombre completo del usuario.
  * @param no_empleado Numero de identificacion del usuario.
  * @param rol Identificador de la coleccion ROL para determinar a que tipo de rol pertenece el usuario.
- * @returns { estatus: true, us: '...'} | 
+ * @returns '...' | StandarException
  */
-usuarioCtrl.actualizarUser = async (req, res) => {
-    const id = req.body.id;
-    const nombre = req.body.nombre;
-    const no_empleado = req.body.no_empleado;
-    const rol = req.body.rol;
-
+usuarioCtrl.actualizarUser = async (id, nombre, no_empleado, rol) => {
     const userFind = await usuarioModel.findOne({ '_id': id });
     if (!userFind) {
-        res.json({
-            estatus: false,
-            us: "No existe el usuario indicado"
-        });
-        return;
+        return new StandarException('No existe el usuario indicado', codigos.noEncontradoUsuario);
     }
     if (userFind.no_empleado !== no_empleado) {
         const buscarOtroUsuario = await usuarioModel.findOne({ 'no_empleado': no_empleado });
         if (buscarOtroUsuario) {
-            res.json({
-                estatus: false,
-                us: "Ya existe el numero de empleado registrado"
-            });
-            return;
+            return new StandarException('Ya existe el numero de empleado registrado', codigos.validacionIncorrecta);
         }
     }
 
@@ -153,10 +127,7 @@ usuarioCtrl.actualizarUser = async (req, res) => {
         no_empleado: no_empleado,
         ROL: rol
     });
-    res.json({
-        estatus: true,
-        us: id
-    });
+    return id;
 }
 
 
@@ -167,18 +138,12 @@ usuarioCtrl.actualizarUser = async (req, res) => {
  * @description Busca el usuario indicado y crea el token de autenticacion en caso de existir
  * @param no_empleado Numero de identificacion del usuario.
  * @param clave Contraseña para ingreso al sistema.
- * @returns { estatus: true, us: '...', token: '....'} | 
+ * @returns { us: '...', token: '...'} | StandarException
  */
-usuarioCtrl.login = async (req, res) => {
-    const no_empleado = req.body.no_empleado
-    const clave = req.body.clave
-
+usuarioCtrl.login = async (no_empleado, clave) => {
     const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
     if (!userFind) {
-        res.json({
-            estatus: false,
-            mensaje: "No existe el numero de empleado"
-        });
+        return new StandarException('No existe el usuario con el numero de empleado', codigos.noEncontradoUsuario);
     } else {
         const passUser = userFind.clave === undefined ? null : userFind.clave;
         const igual = validarClave(clave, passUser);
@@ -190,22 +155,15 @@ usuarioCtrl.login = async (req, res) => {
                     id: userFind._id
                 }
                 const token = jwt.sign(US, tk, { expiresIn: '2h' });
-                res.json({
-                    estatus: true,
+                return {
                     us: userFind._id,
                     token: token
-                });
+                }
             } else {
-                res.json({
-                    estatus: false,
-                    mensaje: "Sin permisos"
-                });
+                return new StandarException('Sin permisos', codigos.sinPermisos);
             }
         } else {
-            res.json({
-                estatus: false,
-                mensaje: "Contraseña incorrecta"
-            });
+            return new StandarException('Constraseña incorrecta', codigos.validacionIncorrecta);
         }
     }
 }
@@ -215,15 +173,14 @@ usuarioCtrl.login = async (req, res) => {
  * @author IIB
  * @version 0.0.2
  * @description Regresa todos los empleados registrados
- * @returns { estatus: true, empleados: [{'...'}]} | 
+ * @returns [{'...'}]} | StandarException
  */
-usuarioCtrl.obtenerEmpleados = async (req, res) => {
+usuarioCtrl.obtenerEmpleados = async () => {
     const empleados = await usuarioModel.find({ tipo_usuario: false });
-
-    res.json({
-        estatus: true,
-        empleados: empleados
-    })
+    if (empleados.length == 0) {
+        return new StandarException('No existen empleados', codigos.datosNoEncontrados);
+    }
+    return empleados;
 }
 
 /**
@@ -233,39 +190,24 @@ usuarioCtrl.obtenerEmpleados = async (req, res) => {
  * @description Busca el usuario indicado y crea el token de autenticacion en caso de existir
  * @param no_empleado Numero de identificacion del usuario.
  * @param clave Contraseña para ingreso al sistema.
- * @returns { estatus: true, us: '...', token: '....'} | 
+ * @returns user | StandarException
  */
-usuarioCtrl.buscarUsuario = async (req, res) => {
-    const no_empleado = req.body.no_empleado
-    const clave = req.body.clave
-
+usuarioCtrl.buscarUsuario = async (no_empleado, clave) => {
     const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
     if (!userFind) {
-        res.json({
-            estatus: false,
-            mensaje: "No existe el numero de empleado"
-        });
+        return new StandarException('No existe el numero de empleado', codigos.noEncontradoUsuario);
     } else {
         const passUser = userFind.clave === undefined ? null : userFind.clave;
         const igual = validarClave(clave, passUser);
         if (passUser != null && igual) {
             const isAdmin = userFind.tipo_usuario;
             if (!isAdmin) {
-                res.json({
-                    estatus: true,
-                    us: userFind
-                });
+                return userFind;
             } else {
-                res.json({
-                    estatus: false,
-                    us: "Usuario no valido"
-                });
+                return new StandarException('Usuario no valido', codigos.sinPermisos);
             }
         } else {
-            res.json({
-                estatus: false,
-                mensaje: "Contraseña incorrecta"
-            });
+            return new StandarException('Contraseña incorrecta', codigos.validacionIncorrecta);
         }
     }
 }
@@ -280,15 +222,9 @@ usuarioCtrl.buscarUsuario = async (req, res) => {
  * @param semana Numero de dias a la semana que labora el tipo de empleado.
  * @param jornada Numero de horas que trabaja el empleado por dia.
  * @param compensacion Array object que indica el tipo de compensacion que recive el empleado.
- * @returns { estatus: true, rol: '...'} | 
+ * @returns '...' | StandarException
  */
-usuarioCtrl.agregrRol = async (req, res) => {
-    const tipo = req.body.tipo;
-    const sueldo = req.body.sueldo;
-    const semana = req.body.semana;
-    const jornada = req.body.jornada;
-    const compensacion = req.body.compensacion;
-
+usuarioCtrl.agregrRol = async (tipo, sueldo, semana, jornada, compensacion) => {
     const rol = new rolModel()
     rol.tipo = tipo;
     rol.sueldo_base = sueldo;
@@ -300,10 +236,7 @@ usuarioCtrl.agregrRol = async (req, res) => {
     await rol.save()
 
     const id = rol._id;
-    res.json({
-        estatus: true,
-        rol: id
-    });
+    return id;
 }
 
 /**
@@ -311,15 +244,15 @@ usuarioCtrl.agregrRol = async (req, res) => {
  * @author IIB
  * @version 0.0.2
  * @description Recupera todos los registros de ROL
- * @returns { estatus: true, rols: [{'...'}] 
+ * @returns  [{'...'}] | StandarException
  */
-usuarioCtrl.obtenerROL = async (req, res) => {
+usuarioCtrl.obtenerROL = async () => {
     const rols = await rolModel.find();
+    if (rols.length == 0) {
+        return new StandarException('No existen registros de rol', codigos.datosNoEncontrados);
+    }
 
-    res.json({
-        estatus: true,
-        rols: rols
-    })
+    return rols;
 }
 
 /**
@@ -327,18 +260,13 @@ usuarioCtrl.obtenerROL = async (req, res) => {
  * @author IIB
  * @version 0.0.2
  * @description Elimina todos los registros de usuarios pertenecientes a un id
- * @returns { estatus: true, rols: [{'...'}] 
+ * @param no_empleado numero de empleado a eliminar
+ * @returns '...' | StandarException
  */
-usuarioCtrl.eliminarUsuario = async (req, res) => {
-    const no_empleado = req.params.empleado;
-
+usuarioCtrl.eliminarUsuario = async (no_empleado) => {
     const userFind = await usuarioModel.findOne({ 'no_empleado': no_empleado });
     if (!userFind) {
-        res.json({
-            estatus: false,
-            us: "No existe el usuario indicado"
-        });
-        return;
+        return new StandarException('No existe el usuario indicado', codigos.noEncontradoUsuario);
     }
 
     const userId = userFind._id;
@@ -346,10 +274,7 @@ usuarioCtrl.eliminarUsuario = async (req, res) => {
     await enModel.deleteMany({ 'US': userId });
     await usuarioModel.deleteMany({ 'no_empleado': no_empleado });
 
-    res.json({
-        estatus: true,
-        us: userId
-    })
+    return userId;
 }
 
 /**

@@ -13,6 +13,10 @@ const coModel = require("../models/corte");
 const usuarioModel = require("../models/usuario");
 const rolModel = require("../models/rol");
 
+// import de exceptions
+const StandarException = require('../exception/StandarException');
+const codigos = require('../exception/codigos');
+
 /**
  * @name registrar_isr
  * @author IIB
@@ -23,12 +27,7 @@ const rolModel = require("../models/rol");
  * @param adicional Tasa del impuesto sobre la renta (ISR) adicional, esta es válida cuando el ingreso sobrepasa el “limite” establecido.
  * @returns { estatus: true, isr: '...'} | 
  */
-nominaCtrl.registrar_isr = async (req, res) => {
-    const tasa_base = req.body.base;
-    const limite = req.body.limite;
-    const adic = req.body.adicional;
-    const dia_corte = req.body.dia_corte;
-
+nominaCtrl.registrar_isr = async (tasa_base, limite, adic, dia_corte) => {
     const isr = new isrModel();
     isr.tasa_base = tasa_base;
     isr.limite = limite;
@@ -39,10 +38,7 @@ nominaCtrl.registrar_isr = async (req, res) => {
     await isr.save()
 
     const id = isr._id;
-    res.json({
-        estatus: true,
-        isr: id
-    });
+    return id;
 }
 
 
@@ -51,15 +47,15 @@ nominaCtrl.registrar_isr = async (req, res) => {
  * @author IIB
  * @version 0.0.2
  * @description Recupera el registro mas actual del ISR.
- * @returns { estatus: true, isr: {'...'}} | 
+ * @returns {'...'} | StandarException
  */
-nominaCtrl.obtenerIsr = async (req, res) => {
+nominaCtrl.obtenerIsr = async () => {
     const isr = await isrModel.find().sort({ creacion: -1 });
+    if (isr.length == 0) {
+        return new StandarException('No existen registros de rol', codigos.datosNoEncontrados);
+    }
 
-    res.json({
-        estatus: true,
-        isr: isr[0]
-    })
+    return isr[0];
 }
 
 /**
@@ -67,11 +63,15 @@ nominaCtrl.obtenerIsr = async (req, res) => {
  * @author IIB
  * @version 0.0.2
  * @description De la coleccion CORTE (CO) recupera el registro de corte mas actual.
- * @returns { estatus: true, cos: [{'...'}]} 
+ * @returns [{'...'}]  | StandarException
  */
 
-nominaCtrl.obtenerUserCo = async (req, res) => {
+nominaCtrl.obtenerUserCo = async () => {
     const cortes = await coModel.find().sort({ creacion: -1 });
+    if (cortes.length == 0) {
+        return new StandarException('No existen registros de rol', codigos.datosNoEncontrados);
+    }
+
     const unicCo = [];
     const idsReg = [""];
     for (let co of cortes) {
@@ -82,7 +82,7 @@ nominaCtrl.obtenerUserCo = async (req, res) => {
             unicCo.push(co);
         }
     }
-    res.json({ estatus: true, cos: unicCo })
+    return unicCo;
 }
 
 /**
@@ -94,41 +94,23 @@ nominaCtrl.obtenerUserCo = async (req, res) => {
  * @param entregas Numero de entregas realizadas.
  * @param hora Total de horas trabajadas en el dia.
  * @param fecha Fecha en la cual se reporta la entrega.
- * @returns { estatus: true, en: '...'} | 
+ * @returns en: '...' | StandarException
  */
-nominaCtrl.registrar_en = async (req, res) => {
-    const us = req.body.us;
-    const entregas = req.body.entregas;
-    const hora = req.body.horas;
-    const fecha = req.body.fecha;
-    const co = req.body.co;
-
+nominaCtrl.registrar_en = async (us, entregas, hora, fecha, co) => {
     const corte = await coModel.findOne({ _id: co });
     if (!corte) {
-        res.send({
-            estatus: false,
-            mensaje: "No existe el registro CO"
-        });
-        return;
+        return new StandarException('No existe el registro CO', codigos.datoNoEncontrado);
     }
 
     const usuario = await usuarioModel.findOne({ _id: us });
     if (!usuario) {
-        res.send({
-            estatus: false,
-            mensaje: "No existe el usuario"
-        });
-        return;
+        return new StandarException('No existe el usuario', codigos.noEncontradoUsuario);
     }
     const rolId = usuario.ROL;
 
     const rolRef = await rolModel.findOne({ _id: rolId });
     if (!rolRef) {
-        res.send({
-            estatus: false,
-            mensaje: "El rol del usuario no existe"
-        });
-        return;
+        return new StandarException('No existe el rol del usuario', codigos.datoNoEncontrado);
     }
     const limite_hrs = rolRef.dias_semana * rolRef.jornada;
 
@@ -209,18 +191,11 @@ nominaCtrl.registrar_en = async (req, res) => {
         } else {
             const idEn = en._id;
             await enModel.deleteOne({ _id: idEn });
-            res.send({
-                estatus: false,
-                mensaje: "El registro esta fuera del corte"
-            });
-            return;
+            return new StandarException('Registro fuera de corte', codigos.corteNoValido);
         }
     }
 
-    res.json({
-        estatus: true,
-        en: en._id
-    });
+    return en._id;
 }
 
 /**
