@@ -149,6 +149,8 @@ export class AgregarComponent implements OnInit {
             id: r._id
           });
         }
+      } else {
+        this.openSnackBar("Sin rols registrados");
       }
     });
   }

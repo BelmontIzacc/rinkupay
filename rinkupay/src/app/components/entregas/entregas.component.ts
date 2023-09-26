@@ -103,6 +103,8 @@ export class EntregasComponent implements OnInit {
             this.rolUsuario = rol;
             this.usuarioSeleccionado.password = "";
             this.mostarMensaje("Indicar horas y entregas realizadas por dia");
+          } else {
+            this.mostarMensaje("No existen Rols registrados");
           }
         })
       } else {

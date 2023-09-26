@@ -53,7 +53,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error" });
       });
     return res.asObservable();
   }
@@ -73,7 +73,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error", token: null});
       });
     return res.asObservable();
   }
@@ -92,7 +92,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, empleados: []});
       });
     return res.asObservable();
   }
@@ -111,7 +111,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, rols: []});
       });
     return res.asObservable();
   }
@@ -169,7 +169,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error" });
       });
     return res.asObservable();
   }
@@ -197,7 +197,7 @@ export class UserService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, us: "A ocurrido un error" });
       });
     return res.asObservable();
   }

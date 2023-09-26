@@ -207,10 +207,16 @@ export class MainUserComponent implements OnInit {
                 } else {
                   this.isRegistros = false;
                 }
+              } else {
+                this.mostarMensaje("Error al recuperar empleados");
               }
             })
+          } else {
+            this.mostarMensaje("No existen cortes registrados");
           }
         });
+      } else {
+        this.mostarMensaje("No se registraron rols de usuario");
       }
     })
   }
@@ -232,6 +238,8 @@ export class MainUserComponent implements OnInit {
           if (respuesta.estatus) {
             this.mostarMensaje("Se elimino el usuario: " + usuario.nombre + "")
             this.cargarDatosEmpleados();
+          } else {
+            this.mostarMensaje("No se elimino el usuario, intenta de nuevo");
           }
         })
       }

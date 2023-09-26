@@ -48,7 +48,7 @@ export class InformeService {
             }
         },
             err => {
-                res.error(err);
+                res.next({ estatus: false, informe: null });
             });
         return res.asObservable();
     }
@@ -76,7 +76,7 @@ export class InformeService {
             }
         },
             err => {
-                res.error(err);
+                res.next({ estatus: false, en: "A ocurrido un error" });
             });
         return res.asObservable();
     }
@@ -101,7 +101,7 @@ export class InformeService {
             }
         },
             err => {
-                res.error(err);
+                res.next({ estatus: false, en: "A ocurrido un error" });
             });
         return res.asObservable();
     }

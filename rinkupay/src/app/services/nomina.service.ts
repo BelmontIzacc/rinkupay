@@ -47,7 +47,7 @@ export class NominaService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, en: "A ocurrido un error"});
       });
     return res.asObservable();
   }
@@ -66,7 +66,7 @@ export class NominaService {
       }
     },
       err => {
-        res.error(err);
+        res.next({ estatus: false, isr: null });
       });
     return res.asObservable();
   }
@@ -85,7 +85,7 @@ export class NominaService {
         }
       },
         err => {
-          res.error(err);
+          res.next({ estatus: false, cos: null });
         });
       return res.asObservable();
     }
